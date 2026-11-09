@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>التسجيل الجنائي</title>
-<meta name="theme-color" content="#1f3b4d"><link rel="manifest" href="manifest.json"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="التسجيل الجنائي">
+<meta name="theme-color" content="#1f3b4d"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="التسجيل الجنائي">
 <link rel="icon" type="image/png"><link rel="apple-touch-icon">
 <style>
 :root{--bg:#f3f1ec;--c:#fff;--t:#1e2a32;--m:#6b7680;--a:#1f3b4d;--g:#b08d57;--b:#e3e0d8;--f:#f8f7f4}
@@ -58,11 +58,11 @@ body{padding-bottom:140px}.mmw{border-color:#c0392b!important}.mmi{border-color:
 <div class="tb"><button class="on" data-t="pd">مذكرات الدفاع</button><button data-t="po">مذكرات الرأي</button></div>
 <div id="pd">
 <div class="c" id="mx"><h2>اختر المذكرة</h2>
-<div class="gtb"><button id="gm" data-g="m">مدع</button><button id="gf" data-g="f">مدعية</button></div>
+<div class="gtb" hidden><button id="gm" data-g="m">مدع</button><button id="gf" data-g="f">مدعية</button></div>
 <div id="mt"></div>
-<div class="r" style="margin-top:4px"><small style="flex:1">✓ = المذكرة الأصلية مرفوعة · ⭐ = الافتراضية</small><button class="s" id="mord">⇅ ترتيب الأنواع</button></div>
+<div class="r" style="margin-top:4px"><small style="flex:1">✓ = المذكرة مرفوعة · ✨ = بتتولّد تلقائياً · ⭐ = الافتراضية</small><button class="s" id="mord">⇅ ترتيب الأنواع</button></div>
 <div class="r" style="margin-top:8px"><small id="msel" style="flex:1;font-weight:600;color:var(--a)"></small><button class="s" id="mpin">☆ تثبيت</button></div>
-<details><summary>أخرى (مدعيان / مدعيات / أنواع إضافية)</summary>
+<details><summary>أخرى (أنواع إضافية)</summary>
 <div class="r" style="margin-top:10px"><select id="ko" style="flex:1"></select></div>
 <div class="r"><button class="s" id="kadd">＋ إضافة نوع</button><button class="s" id="kdel">🗑 حذف النوع ده</button><button class="s" id="kres">↺ استرجاع المحذوف</button></div>
 <div class="r" style="margin-top:12px"><select id="ty" style="flex:1"></select></div>
@@ -70,9 +70,9 @@ body{padding-bottom:140px}.mmw{border-color:#c0392b!important}.mmi{border-color:
 <small>أنواع المذكرات الستة فوق بتتعمل لوحدها. الزراير دي لو عايز تضيف نوع تاني أو تغيّر اسم نوع.</small>
 </details></div>
 
-<div class="c mmo" id="mm" style="display:flex;gap:10px;align-items:center;padding:10px 14px"><span id="mmt" style="flex:1;font-size:14px"></span><button class="s" id="mmb">📎 رفع</button></div>
+<div class="c mmo" id="mm" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px"><span id="mmt" style="flex:1 1 200px;font-size:14px"></span><button class="s" id="mmb">📎 رفع</button><button class="s" id="mmv" hidden>👁 معاينة</button><button class="s" id="mma" hidden>✓ اعتمدها</button></div>
 
-<div class="c"><h2>الأطراف</h2>
+<div class="c" id="stp2" style="display:none"><h2>الأطراف</h2>
 <div class="r"><input id="pn" placeholder="الاسم">
 <select id="kd" hidden><option value="m">مدع — قضية</option><option value="mN">مدع — قضايا</option><option value="f">مدعية — قضية</option><option value="fN">مدعية — قضايا</option><option value="d">مدعيان</option><option value="fp">مدعيات</option></select></div>
 <div class="r"><input id="dn" value="وزير الداخلية">
@@ -80,32 +80,43 @@ body{padding-bottom:140px}.mmw{border-color:#c0392b!important}.mmi{border-color:
 <div class="r"><select id="dns" style="flex:1"></select><button class="s" id="dnv">＋ حفظ الاسم</button><button class="s" id="dnd">🗑</button></div>
 <button class="s" id="lcb" hidden style="width:100%;margin-top:10px">↩ استرجاع القضية السابقة</button></div>
 
-<div class="c"><h2>الدعوى والجلسة</h2>
+<div class="c" id="stp3" style="display:none"><h2>الدعوى والجلسة</h2>
 <div class="r"><input id="no" inputmode="numeric" placeholder="رقم الدعوى"><span class="lb">لسنة</span><div id="cy"></div></div>
 <div class="r"><span class="lb">الجلسة</span><div id="cd"></div><div id="cm"></div><div id="cyy"></div></div>
 <div class="r"><button class="s" id="dp7" style="flex:1">＋ أسبوع</button></div>
 <small>اكتب التاريخ بإيدك أو اختاره بالسهم، أو سيبه فاضي وتكتبه على الورق.<br>📌 التاريخ بيفضل ثابت في كل القضايا (حتى بعد قفل البرنامج) لحد ما تغيّره بإيدك.</small></div>
 
-<div class="c"><h2>الطلبات الختامية</h2>
+<div class="c" id="stp4" style="display:none"><h2>الطلبات الختامية</h2>
 <textarea id="fx" rows="6" placeholder="الصق الطلبات هنا (أولاً.. ثانياً.. ثالثاً..) أو اكتبها. سيبها فاضية لو هتكتبها بخط اليد"></textarea>
 <div class="r" style="margin-top:8px"><button class="s" id="cl">✨ ترتيب النص</button><small style="flex:1">النص الملصوق بيترتّب لوحده (بيلم الأسطر المقطوعة ويشيل الرموز المخفية).</small></div>
+<div id="nsw" style="margin-top:10px"></div><small id="nss" style="display:block;margin-top:6px;font-weight:600"></small>
+<details id="apd" hidden open style="margin-top:12px"><summary id="aps" style="font-weight:600"></summary>
+<textarea id="ap" rows="4" style="margin-top:8px" placeholder="الصق هنا التطبيق من جوجل لينس — هيتحط في المذكرة بين البداية والنهاية اللي تحدّدها"></textarea>
+<div class="r" style="margin-top:8px"><button class="s" id="cl3">✨ ترتيب النص</button><button class="s" id="apa">✎ حدّد البداية والنهاية في المذكرة</button></div></details>
+<details id="cxd" style="margin-top:12px"><summary id="cxs" style="font-weight:600"></summary>
+<textarea id="cx" rows="3" style="margin-top:8px" placeholder="الصق هنا القضية أو القضايا المطلوب محوها من جوجل لينس — هتتحط في المذكرة مكان «القضية المبينة بعريضة الدعوى»"></textarea>
+<div class="r" style="margin-top:8px"><button class="s" id="cl2">✨ ترتيب النص</button><small style="flex:1">النص الملصوق بيترتّب لوحده زي خانة الطلبات. سيبها فاضية لو القضية مكتوبة في الطلبات — العبارة الأصلية بتفضل زي ما هي.</small></div></details>
 <details><summary>تعديل عبارتي البداية والنهاية (للمذكرة المختارة فقط)</summary>
 <small id="slb" style="display:block;margin-top:8px;font-weight:600"></small>
 <div class="r" style="margin-top:10px"><span class="lb" style="min-width:64px">البداية</span><input id="s0"></div>
 <div class="r"><span class="lb" style="min-width:64px">النهاية</span><input id="s1"></div>
-<small>الطلبات بتتكتب بعد عبارة البداية وقبل الفقرة اللي فيها عبارة النهاية. العبارتان نفسهما بيفضلوا زي ما هما.</small><br>
+<small>الطلبات بتتكتب بعد عبارة البداية وقبل الفقرة اللي فيها عبارة النهاية. تقدر تكتب أكتر من عبارة نهاية وتفصل بينهم بـ | والبرنامج يقرا اللي موجودة في المذكرة تلقائي.</small><br>
 <small id="lc"></small> <button class="s" id="s2" style="margin-top:6px">الافتراضي</button></details></div>
 
-<div class="c"><details id="dfd"><summary style="margin:0;font-weight:600;color:var(--g)">الدفوع الشكلية (اختياري)</summary>
+<div class="c" id="stp5" style="display:none"><details id="dfd"><summary style="margin:0;font-weight:600;color:var(--g)">الدفوع الشكلية (اختياري)</summary>
 <div class="r"><select id="ps" style="flex:1"></select><button class="s" id="psv">💾 حفظ كاختيار سريع</button><button class="s" id="psd">🗑</button></div>
 <div id="lv" style="margin-top:8px"></div>
-<small>سيبها فاضية وتتولّد المذكرة زي ما هي. لو اخترت دفوع: ابدأ بـ«أصلياً»، واختار «رفض الدعوى» في آخر مستوى. الدفوع بتيجي من «مكتبة الدفوع» تحت.</small></details></div>
+<button class="s" id="dimp2" style="width:100%;margin-top:8px">📥 استيراد دفوع شكلية من مذكرات (مرة واحدة)</button>
+<small>سيبها فاضية وتتولّد المذكرة زي ما هي. لو اخترت دفوع شكلية بس، البرنامج بيضيف «رفض الدعوى» لوحده في آخر مستوى (احتياطياً)، وتقدر تختاره بنفسك لو عايز ترتبه بشكل تاني. الدفوع بتيجي من «مكتبة الدفوع» تحت. دفع «صفة» ليه خانات ترتيب المدعى عليه والجهة، وتقدر تكتب في نصه {المدعى عليه} أو {الجهة} أو {الترتيب} فيتملوا لوحدهم.</small></details></div>
 
+<div id="sth" style="margin:10px 0;text-align:center;display:none"><small id="sht"></small> <button class="s" id="sks">تخطّي ◂</button></div>
 <div class="c"><details id="stg"><summary style="margin:0;font-weight:600">⚙ الإعدادات والأدوات (دفعة · أرشيف · دفوع · مذكرات أصلية)</summary>
 <div style="margin-top:12px"><small style="display:block;font-weight:600;color:var(--g)">المذكرة الأصلية للمذكرة المختارة</small>
 <small id="kn"></small>
 <div class="r"><small id="ks" style="flex:1"></small><button class="s" id="kb">📎 رفع المذكرة الأصلية</button></div>
 <input type="file" id="kf" accept=".docx" hidden></div>
+<label class="ck" style="margin-top:12px"><input type="checkbox" id="fmtc"><span>تنسيق مميز للدفوع والطلبات الختامية (عناوين غامقة بخط تحتها، وفقرات مضبوطة ومتباعدة)</span></label>
+<label class="ck" style="margin-top:12px"><input type="checkbox" id="adc"><span>توليد مذكرة المدعية تلقائياً من مذكرة المدع لو ما اترفعتش</span></label>
 <label class="ck" style="margin-top:12px"><input type="checkbox" id="rvall"><span>اعرض نافذة المراجعة دايماً (حتى لو مفيش تحذيرات)</span></label>
 <div style="margin-top:12px"><button class="s" id="nw" style="margin-top:12px;width:100%">↻ مسح المدعي ورقم الدعوى والطلبات (قضية جديدة بنفس الإعدادات)</button></div>
 <div class="c" style="margin-top:14px"><details><summary style="margin:0">توليد دفعة — عدة قضايا في ملف ZIP</summary>
@@ -120,13 +131,14 @@ body{padding-bottom:140px}.mmw{border-color:#c0392b!important}.mmi{border-color:
 <small>كل مذكرة بتتولّد بتتسجل هنا. «فتح» بيرجّع بياناتها للفورم، و«توليد» بيفتحها ويولّدها تاني. الأرشيف بيتحفظ في المتصفح ده بس ومش بيدخل في النسخة الاحتياطية (فيه أسماء موكلين).</small></details></div>
 <div class="c"><details><summary style="margin:0">مكتبة الدفوع الشكلية — بتتكتب مرة وتتقفل</summary>
 <div id="dfl" style="margin-top:8px"></div>
+<div class="r" style="margin-top:8px"><button class="s" id="dimp" style="flex:1">📥 استيراد الدفوع الشكلية من مذكرات (مرة واحدة)</button></div><input type="file" id="dimf" accept=".docx" multiple hidden>
 <div class="r" style="margin-top:8px"><button class="s" id="da">＋ دفع جديد</button></div>
 <small>كل دفع له نص للمدعي ونص للمدعية. بعد «حفظ وقفل» ما بيتعدلش غير بزرار «فتح للتعديل».</small></details></div>
-<div class="c" style="margin-top:22px"><details open><summary style="margin:0">المذكرات الأصلية — كل المذكرات اللي هتترفع</summary><div id="tp" style="margin-top:8px"></div></details></div>
+<div class="c" style="margin-top:22px"><details open><summary style="margin:0">المذكرات الأصلية — الموضوعات فقط (مذكرة المدع لكل موضوع)</summary><div class="r" style="margin-top:8px"><button class="s" id="bulk" style="flex:1">📎 رفع كل المذكرات مرة واحدة</button><button class="s" id="dict">⚙ قاموس التحويل</button></div><input type="file" id="bkf" accept=".docx" multiple hidden><small style="display:block;margin-top:6px">مذكرة المدعية بتتولّد تلقائياً من مذكرة المدع.</small><div id="tp" style="margin-top:8px"></div></details></div>
 </div>
 </details></div>
 
-<div id="gb"><div><button class="go" id="go">توليد المذكرة (Word)</button><span id="st"></span></div></div>
+<div id="gb" style="display:none"><div><button class="go" id="go">توليد المذكرة (Word)</button><span id="st"></span></div></div>
 </div>
 
 <div id="po" hidden>
@@ -219,6 +231,52 @@ function nrm(s){let o='',m=[];for(let i=0;i<s.length;i++){let c=s[i];
  o+=c.replace(/[أإآ]/,'ا').replace('ى','ي').replace('ة','ه');m.push(i)}
  return{o,m}}
 function find(t,ph){const a=nrm(t),b=nrm(ph).o.trim();if(!b)return null;const i=a.o.indexOf(b);return i<0?null:{s:a.m[i],e:a.m[i+b.length-1]+1}}
+const STAYWHO={m:['يبتغى','المدعى'],f:['تبتغى','المدعية'],d:['يبتغى','المدعيان'],fd:['تبتغى','المدعيتان'],p:['يبتغى','المدعين'],fp:['تبتغى','المدعيات']};
+function stripStay(p,kind){
+ const L='[\\u0621-\\u064A]',D='[\\u064B-\\u065F\\u0640]*',W=STAYWHO[kind]||STAYWHO.m;
+ const rules=[
+  [new RegExp('ه'+D+'د'+D+'[يى]'+D+'ا?'+D+'\\s+بما\\s+تقد'+D+'م[^\\n]{0,200}?(?<!'+L+')ب?وقف\\s*(?:ال)?تنفيذ\\s*(?:ثم|و)?\\s*(?:ال)?[إأا]لغاء','g'),()=>'هديا بما تقدم واذ '+W[0]+' '+W[1]+' إلغاء','0'],
+  [new RegExp('(?<!'+L+')(ب?)وقف\\s*(?:ال)?تنفيذ\\s*و\\s*(ال)?([إأا]لغاء)','g'),x=>(x[1]||'')+(x[2]||'')+x[3],'1']];
+ return swapAll(p,rules,null)}
+const PPR_ORD='pStyle keepNext keepLines pageBreakBefore framePr widowControl numPr suppressLineNumbers pBdr shd tabs suppressAutoHyphens kinsoku wordWrap overflowPunct topLinePunct autoSpaceDE autoSpaceDN bidi adjustRightInd snapToGrid spacing ind contextualSpacing mirrorIndents suppressOverlap jc textDirection textAlignment textboxTightWrap outlineLvl divId cnfStyle rPr sectPr pPrChange'.split(' ');
+const RPR_ORD='rStyle rFonts b bCs i iCs caps smallCaps strike dstrike outline shadow emboss imprint noProof snapToGrid vanish webHidden color spacing w kern position sz szCs highlight u effect bdr shd fitText vertAlign rtl cs em lang eastAsianLayout specVanish oMath'.split(' ');
+function kidsOf(inner){const out=[],re=/<w:([A-Za-z0-9]+)(?:\s[^>]*?)?(?:\/>|>[\s\S]*?<\/w:\1>)/g;let m;while((m=re.exec(inner)))out.push([m[1],m[0]]);return out}
+function setProps(inner,patch,ord){const map=new Map(kidsOf(inner));Object.entries(patch||{}).forEach(([k,v])=>{if(v===null)map.delete(k);else map.set(k,v)});
+ return [...map.entries()].sort((a,b)=>{const x=ord.indexOf(a[0]),y=ord.indexOf(b[0]);return(x<0?999:x)-(y<0?999:y)}).map(x=>x[1]).join('')}
+function styleP(p,pp,rp){const open=p.match(/^<w:p[^>]*>/)[0],m=p.match(/<w:pPr>([\s\S]*?)<\/w:pPr>/),np='<w:pPr>'+setProps(m?m[1]:'',pp,PPR_ORD)+'</w:pPr>';
+ let r=m?p.replace(m[0],'\u0002'):p.replace(open,open+'\u0002');r=r.replace('\u0002',np);
+ if(rp)r=r.replace(/<w:r>(?:<w:rPr>([\s\S]*?)<\/w:rPr>)?/g,(all,g)=>'<w:r><w:rPr>'+setProps(g||'',rp,RPR_ORD)+'</w:rPr>');return r}
+const F_TNR='<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/>',F_ARI='<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/>',SH='<w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"/>';
+const NOEFF={i:null,iCs:null,highlight:null,shd:null,u:null};
+const PSTY={
+ h:[{keepNext:'<w:keepNext/>',ind:'<w:ind w:left="398" w:right="270"/>',spacing:'<w:spacing w:before="240" w:after="120" w:line="240" w:lineRule="auto"/>',shd:null},{...NOEFF,rFonts:F_ARI,b:'<w:b/>',bCs:'<w:bCs/>',u:'<w:u w:val="single"/>',sz:'<w:sz w:val="40"/>',szCs:'<w:szCs w:val="40"/>'}],
+ hs:[{keepNext:'<w:keepNext/>',ind:'<w:ind w:left="398" w:right="270"/>',spacing:'<w:spacing w:before="240" w:after="120" w:line="240" w:lineRule="auto"/>',shd:null},{...NOEFF,rFonts:F_ARI,b:'<w:b/>',bCs:'<w:bCs/>',u:'<w:u w:val="single"/>',shd:SH,sz:'<w:sz w:val="40"/>',szCs:'<w:szCs w:val="40"/>'}],
+ b:[{spacing:'<w:spacing w:before="0" w:after="80" w:line="240" w:lineRule="auto"/>',ind:'<w:ind w:left="398" w:right="270"/>',jc:'<w:jc w:val="both"/>',shd:null},{...NOEFF,rFonts:F_TNR,b:null,bCs:null,sz:'<w:sz w:val="30"/>',szCs:'<w:szCs w:val="30"/>'}],
+ c:[{ind:'<w:ind w:left="398" w:right="270"/>',spacing:'<w:spacing w:before="0" w:after="60" w:line="240" w:lineRule="auto"/>',shd:null},{...NOEFF,rFonts:F_TNR,b:'<w:b/>',bCs:'<w:bCs/>',sz:'<w:sz w:val="32"/>',szCs:'<w:szCs w:val="32"/>'}]};
+const SP=(p,k,o)=>o.fmt===false?p:styleP(p,PSTY[k][0],PSTY[k][1]);
+function fitP(p){const t=ptext(p);if(!t.trim())return p;
+ const m=p.match(/<w:ind ([^>]*)\/>/),g=k=>{if(!m)return 0;const x=m[1].match(new RegExp('w:'+k+'="(-?\\d+)"'));return x?+x[1]:0};
+ const L=Math.max(g('left'),g('start'),398),R=Math.max(g('right'),g('end'),270),jm=p.match(/<w:jc w:val="([^"]*)"\/>/);
+ const pp={ind:'<w:ind w:left="'+L+'" w:right="'+R+'"/>'};
+ if(t.trim().length>60&&(!jm||jm[1]!=='center'))pp.jc='<w:jc w:val="both"/>';
+ return styleP(p,pp,null)}
+function tidyLong(p){const t=ptext(p);if(t.length<=120)return p;let tot=0,u=0;
+ (p.match(/<w:r[ >](?:(?!<w:r[ >])[\s\S])*?<\/w:r>/g)||[]).forEach(r=>{const n=ptext(r).length;tot+=n;if(/<w:u /.test(r))u+=n});
+ if(!tot||u/tot<0.9)return p;
+ return styleP(p,{spacing:'<w:spacing w:before="0" w:after="80" w:line="240" w:lineRule="auto"/>'},null).replace(/<w:u [^>]*\/>/g,'')}
+function swapInPara(p,rx,R){
+ const re=/<w:t(?: [^>]*)?>([^<]*)<\/w:t>/g,N=[];let m;
+ while((m=re.exec(p)))N.push({s:m.index,l:m[0].length,t:unesc(m[1])});
+ if(!N.length)return p;
+ const full=N.map(n=>n.t).join(''),mt=rx.exec(full);
+ if(!mt)return p;
+ const a=mt.index,b=a+mt[0].length;let pos=0,first=true;
+ N.forEach(n=>{const n0=pos,n1=pos+n.t.length;pos=n1;
+  if(n1<=a||n0>=b){n.nt=n.t;return}
+  n.nt=n.t.slice(0,Math.max(0,a-n0))+(first?R:'')+n.t.slice(Math.max(0,b-n0));first=false});
+ let out=p;for(let i=N.length-1;i>=0;i--){const n=N[i];if(n.nt===n.t)continue;
+  out=out.slice(0,n.s)+'<w:t xml:space="preserve">'+esc(n.nt)+'</w:t>'+out.slice(n.s+n.l)}
+ return out}
 function buildMemo(files,o){
  const dec=new TextDecoder(),enc=new TextEncoder();
  const doc=files.find(f=>f.name==='word/document.xml');
@@ -227,9 +285,9 @@ function buildMemo(files,o){
  const iP=tx.findIndex((t,i)=>iD>=0&&i>iD&&/^\s*السيد/.test(t)&&/مدع/.test(t));
  const iC=tx.findIndex(t=>/الدعوى\s*رقم/.test(t));
  const iS=tx.findIndex(t=>/لنظرها\s*جلسة/.test(t));
- const s0=o.s0||'طالباً في ختامها الحكم',s1=o.s1||'وذلك بزعم من انه';
- const iF=tx.findIndex(t=>find(t,s0)),iE=tx.findIndex((t,i)=>iF>=0&&i>iF&&find(t,s1));
- const miss=[['عبارة البداية «'+s0+'»',iF],['عبارة النهاية «'+s1+'» (بعد البداية)',iE],['سطر المدعى عليه',iD],['سطر المدعي',iP],['سطر رقم الدعوى',iC],['سطر الجلسة',iS]].filter(x=>x[1]<0).map(x=>x[0]);
+ const s0=o.s0||D0,s1=o.s1||D1,A1=s1.split(/[|\n]/).map(x=>x.trim()).filter(Boolean);
+ const iF=tx.findIndex(t=>find(t,s0)),iE=tx.findIndex((t,i)=>iF>=0&&i>iF&&A1.some(a=>find(t,a)));
+ const miss=[['عبارة البداية «'+s0+'»',iF],['عبارة النهاية «'+A1.join(' | ')+'» (بعد البداية)',iE],['سطر المدعى عليه',iD],['سطر المدعي',iP],['سطر رقم الدعوى',iC],['سطر الجلسة',iS]].filter(x=>x[1]<0).map(x=>x[0]);
  if(miss.length)throw Error('لم أجد في المذكرة: '+miss.join('، '));
  const np=ps.slice(),kind=bk(o.kind||'m'),f=kind==='f'||kind==='fp'||kind==='fd',pm=kind==='d'||kind==='fd'?1:kind==='p'||kind==='fp'?2:0;
  // defendants
@@ -251,7 +309,7 @@ function buildMemo(files,o){
  const hh=find(tx[iF],s0),lm=tx[iF].slice(0,hh.e)+(tx[iF].slice(hh.e).match(/^[\u064B-\u065F]*\s*:?\s*/)||[''])[0];
  const st=ps.findIndex((p,i)=>i>iF&&i<iE&&tx[i].trim()),sp=ps[st>=0?st:iF];
  const ls=(o.facts||'').split('\n').map(x=>x.trim()).filter(Boolean),first=ls.shift()||'';
- np[iF]=rebuild(ps[iF],/./,lm+first);
+ np[iF]=rebuild(ps[iF],/./,lm+(first&&!/\s$/.test(lm)?' ':'')+first);
  const rest=ls.length||first?ls:Array(5).fill(' ');
  for(let i=iF+1;i<iE;i++)np[i]='';
  np[iF]+=rest.map(x=>rebuild(sp,/./,x)).join('');
@@ -264,21 +322,46 @@ function buildMemo(files,o){
   const m2=[['عنوان «الدفاع»',iDf],['سطر «نطلب الحكم» اللي بعده',iRh],['«بناء عليه»',iBn],['الطلبات الختامية بعد «بناء عليه»',iFn]].filter(x=>x[1]<0).map(x=>x[0]);
   if(m2.length)throw Error('لم أجد في المذكرة: '+m2.join('، '));
   const clean=p=>p.replace(/ w14:(paraId|textId)="[^"]*"/g,'');
-  const LB=['أصلياً','احتياطياً','على سبيل الاحتياط','على سبيل الاحتياط الكلي'];
+  const LB=['أصلياً','احتياطياً','على سبيل الاحتياط','على سبيل الاحتياط الكلي','على سبيل الاحتياط الجزئي'];
   const ib=ps.findIndex((p,i)=>i>iRh&&i<iBn&&tx[i].trim()),ibl=ps.findIndex((p,i)=>i>iRh&&i<iBn&&!tx[i].trim());
   const bs=ps[ib>=0?ib:iRh],bl=ibl>=0?clean(ps[ibl]):'<w:p><w:pPr/></w:p>';
-  const rejBody=ps.slice(iRh+1,iBn).join('');
+  const rejBody=ps.slice(iRh+1,iBn).map(q=>o.fmt===false?q:tidyLong(q)).join('');
   const prefix=(p,label)=>{const r=(p.match(/<w:r[ >](?:(?!<w:r[ >])[\s\S])*?<\/w:r>/)||[''])[0],rPr=(r.match(/<w:rPr>[\s\S]*?<\/w:rPr>/)||[''])[0];
    return clean(p).replace(/(<\/w:pPr>)/,'$1<w:r>'+rPr+'<w:t xml:space="preserve">'+esc(label+': ')+'</w:t></w:r>')};
   const rejPh=tx[iRh].replace(/^\s*نطلب\s*الحكم\s*:?\s*/,'').replace(/[\s:]+$/,'').trim()||'برفض الدعوى';
-  np[iRh]=rebuild(ps[iRh],/./,'نطلب الحكم:')+o.levels.map((lv,i)=>rebuild(ps[iRh],/./,LB[i]+': '+(lv.rej?rejPh:lv.req)+':')
-   +(lv.rej?rejBody:(lv.text||'').split('\n').map(l=>l.trim()?rebuild(bs,/./,l.trim()):bl).join('')+bl)).join('');
+  const n0=o.levels.length,itemXml=(it,lab)=>SP(rebuild(ps[iRh],/./,lab+': '+(it.rej?rejPh:it.req)+':'),'hs',o)+(it.rej?rejBody:(it.text||'').split('\n').map(l=>l.trim()?SP(rebuild(bs,/./,l.trim()),'b',o):bl).join('')+bl);
+  np[iRh]=SP(rebuild(ps[iRh],/./,'نطلب الحكم:'),'h',o)+o.levels.map((lv,i)=>{const it=lv.items||[lv];if(it.length===1)return itemXml(it[0],LB[i]);return(n0>1?SP(rebuild(ps[iRh],/./,LB[i]+':'),'h',o):'')+it.map((x,k)=>itemXml(x,OR[k])).join('')}).join('');
   for(let i=iRh+1;i<iBn;i++)np[i]='';
-  const rest=tx[iFn].replace(/^\s*نطلب\s*الحكم\s*:?\s*/,''),phrase=rest.split(/[،,]?\s*مع\s+[إا]لزام/)[0].replace(/[\s،.:]+$/,'').trim()||'برفض الدعوى';
+  const cl=[iFn];
+  if(!/المصروفات|المصاريف/.test(tx[iFn])){const ex=[];for(let q=iFn+1,c=0;q<tx.length&&c<3;q++){if(!tx[q].trim())continue;c++;ex.push(q);if(/المصروفات|المصاريف/.test(tx[q])){cl.push(...ex);break}}}
+  const rest=cl.map(q=>tx[q]).join(' ').replace(/^\s*نطلب\s*الحكم\s*:?\s*/,''),phrase=rest.split(/[،,]?\s*مع\s+[إا]لزام/)[0].replace(/[\s،.:]+$/,'').trim()||'برفض الدعوى';
   const PLN={m:'المدعي',f:'المدعية',d:'المدعيين',fd:'المدعيتين',p:'المدعين',fp:'المدعيات'}[kind],n=o.levels.length;
-  const lines=['نطلب الحكم:',...o.levels.map((lv,i)=>LB[i]+': '+(lv.rej?phrase:lv.req)),'مع إلزام '+PLN+' بالمصروفات'+(n===1?'.':n===2?' في أي من الحالين.':' في أي من الحالات.')];
-  np[iFn]=lines.map(l=>rebuild(ps[iFn],/./,l)).join('');
+  const lines=['نطلب الحكم:'];
+  o.levels.forEach((lv,i)=>{const it=lv.items||[lv];if(it.length===1){lines.push(LB[i]+': '+(it[0].rej?phrase:it[0].req));return}
+   if(n>1)lines.push(LB[i]+':');it.forEach((x,k)=>lines.push(OR[k]+': '+(x.rej?phrase:x.req)))});
+  lines.push('مع إلزام '+PLN+' بالمصروفات'+(n===1?'.':n===2?' في أي من الحالين.':' في أي من الحالات.'));
+  np[iFn]=lines.map((l,i)=>SP(rebuild(ps[iFn],/./,l),'c',o)).join('');cl.slice(1).forEach(q=>{np[q]=''});
  }
+ if(o.noStay)for(let i=0;i<np.length;i++)np[i]=stripStay(np[i],kind);
+ const cz=(o.cases||'').split(/\n+/).map(x=>x.trim()).filter(Boolean).join(' ');
+ if(cz){const rx=/(القضي[ةه]|القضايا|القضيتين|القضيتان)\s*(?:المبين\S*\s*بعريض\S*\s*الدعو\S*|محل\S?\s*التداع\S*)/;for(let i=iE;i<np.length;i++){const q=swapInPara(np[i],rx,cz);if(q!==np[i])np[i]=q}}
+ {const NZ=t=>String(t).replace(/[\u064B-\u065F\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/\s+/g,' ').trim();
+  for(let i=iE;i<np.length;i++){if(/^(?:اصليا|احتياطيا|عل[يى] سبيل الاحتياط(?: الكلي| الجزئي)?)\s*[:\-–ـ]*$/.test(NZ(ptext(np[i]))))np[i]=''}
+  if(cz){const en=t=>t.replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632),ok=new Set((en(cz).match(/\d+\s*لسنة\s*\d+/g)||[]).map(x=>x.replace(/\s+/g,'')));
+   const bad=new Set();for(let i=iE;i<np.length;i++)(en(ptext(np[i])).match(/القضي[ةه]\s+رقم\s+\d+\s+لسنة\s*\d+/g)||[]).forEach(x=>{const k=x.replace(/^.*رقم\s+/,'').replace(/\s+/g,'');if(ok.size&&!ok.has(k))bad.add(k.replace('لسنة','/'))});
+   if(bad.size)(o.warns=o.warns||[]).push('في نص الدفاع قضية/قضايا ('+[...bad].join('، ')+') غير القضية المطلوب محوها — غالباً بقايا من مذكرة قديمة في المذكرة الجاهزة، راجعها.')}}
+ if(o.app&&o.app.trim()){
+  const a0=(o.a0||'').trim(),a1=(o.a1||'').trim();
+  if(!a0||!a1)throw Error('حدّد بداية ونهاية «التطبيق» في المذكرة (زرار «حدّد البداية والنهاية»).');
+  let iA=tx.findIndex((t,i)=>i>=iE&&find(t,a0));if(iA<0)iA=tx.findIndex(t=>find(t,a0));
+  const iB=iA<0?-1:tx.findIndex((t,i)=>i>iA&&find(t,a1));
+  if(iA<0||iB<0)throw Error('لم أجد في المذكرة: '+(iA<0?'بداية التطبيق «'+a0+'»':'نهاية التطبيق «'+a1+'»'));
+  const hA=find(tx[iA],a0),lmA=tx[iA].slice(0,hA.e)+(tx[iA].slice(hA.e).match(/^[\u064B-\u065F]*\s*:?\s*/)||[''])[0];
+  const stA=ps.findIndex((p,i)=>i>iA&&i<iB&&tx[i].trim()),spA=ps[stA>=0?stA:iA];
+  const LA=o.app.split('\n').map(x=>x.trim()).filter(Boolean),f1=LA.shift()||'';
+  np[iA]=rebuild(ps[iA],/./,lmA+f1);for(let i=iA+1;i<iB;i++)np[i]='';np[iA]+=LA.map(x=>rebuild(spA,/./,x)).join('');
+ }
+ if(o.fmt!==false)for(let i=iF;i<np.length;i++)np[i]=np[i].replace(PRE,q=>fitP(q));
  let k=0;xml=xml.replace(PRE,()=>np[k++]);
  return files.map(x=>x===doc?{name:x.name,data:enc.encode(xml)}:x);
 }
@@ -302,9 +385,9 @@ function combo(host,id,list,ph,val){const h=$(host);h.className='cb';
 const rg=(a,n)=>Array.from({length:n},(_,i)=>a+i),Y=new Date().getFullYear();
 combo('cy','yr',rg(70,21),'السنة',80);
 combo('cd','d',rg(1,31),'يوم','');combo('cm','m',rg(1,12),'شهر','');combo('cyy','y',rg(Y-1,6),'سنة',Y);
-const KN={m:'مدع — قضية',m2:'مدع — قضيتين',mN:'مدع — قضايا',f:'مدعية — قضية',f2:'مدعية — قضيتين',fN:'مدعية — قضايا',d:'مدعيان',fp:'مدعيات',fd:'وأخرى (قديم)',p:'وآخرين (قديم)'};
-const D0='طالباً في ختامها الحكم',D1='وذلك بزعم من انه';
-const TY0='t0',KINDS=['m','m2','mN','f','f2','fN','d','fp','fd','p'],KIND6=['m','m2','mN','f','f2','fN','d','fp'];
+const KN={m:'مدع',m2:'مدع — قضيتين',mN:'مدع — قضايا',f:'مدعية',f2:'مدعية — قضيتين',fN:'مدعية — قضايا',d:'مدعيان',fp:'مدعيات',fd:'وأخرى (قديم)',p:'وآخرين (قديم)'};
+const D0='في ختامها الحكم',D1='وذلك بزعم من|ويزعم|وتزعم المدعية|وذكر شرحا|وذكرت شرحا',OLDD=['طالباً في ختامها الحكم','وذلك بزعم من انه','طالبين في ختامها الحكم','طالبين في ختامها الحكم:','ويزعم المدعيان','ويزعم المدعين'];
+const TY0='t0',KINDS=['m','m2','mN','f','f2','fN','d','fp','fd','p'],KIND6=['m','f'];
 let ck=[];try{ck=JSON.parse(gv('ckinds')||'[]')}catch(e){}if(!Array.isArray(ck))ck=[];
 let hk=[];try{hk=JSON.parse(gv('hkinds')||'[]')}catch(e){}if(!Array.isArray(hk))hk=[];
 ck.forEach(c=>{KN[c.id]=c.name});
@@ -314,7 +397,7 @@ function rkd(v){const e=$('kd'),keep=v||e.value;e.innerHTML='';vis().forEach(k=>
 let types=[];try{types=JSON.parse(gv('types')||'[]')}catch(e){}
 if(!Array.isArray(types))types=[];
 if(!types.some(t=>t.id===TY0))types.unshift({id:TY0,name:'المذكرة الأساسية'});
-types.forEach(t=>{if(t.name==='وقف تنفيذ العقوبة')t.name='المذكرة الأساسية'});
+types.forEach(t=>{if(t.id===TY0&&t.name==='وقف تنفيذ العقوبة')t.name='المذكرة الأساسية'});
 const svT=()=>sv('types',JSON.stringify(types));
 let cur=gv('ty');if(!types.some(t=>t.id===cur))cur=TY0;
 const tk=k=>cur===TY0?'tpl_'+k:'tpl_'+cur+'_'+k;
@@ -322,16 +405,17 @@ const lk=i=>cur===TY0?'loc'+i:'loc'+i+'_'+cur;
 const tname=()=>types.find(t=>t.id===cur).name;
 function rt(){const s=$('ty');s.innerHTML='';types.forEach(t=>s.add(new Option(t.name,t.id)));s.value=cur}
 const lkk=(i,k)=>lk(i)+'_'+k;
-const lg=(i,k)=>gv(lkk(i,k))||gv(lk(i))||(+i?D1:D0);
+const lg=(i,k)=>{const v=gv(lkk(i,k));return v&&!OLDD.includes(v.trim())?v:(+i?D1:D0)};
 function loadLoc(){const k=$('kd').value;$('s0').value=lg(0,k);$('s1').value=lg(1,k)}
 const loc=()=>({s0:$('s0').value.trim()||D0,s1:$('s1').value.trim()||D1});
 const locFor=k=>({s0:lg(0,k).trim()||D0,s1:lg(1,k).trim()||D1});
 /* ===== المستطيل: 6 أنواع × (مدع/مدعية) × (قضية/قضايا) ===== */
-const MT=[['t0','عادية',null],['rdj','رد اعتبار جناية','رد اعتبار جناية'],['rdh','رد اعتبار جنحة','رد اعتبار جنحة'],['wq','وقف تنفيذ','وقف تنفيذ'],['sq','سقوط عقوبة','سقوط عقوبة'],['mw','موضوعي','موضوعي']];
+const MT=[['t0','عادية',null],['rdj','رد اعتبار جناية','رد اعتبار جناية'],['rdh','رد اعتبار جنحة','رد اعتبار جنحة'],['wq','وقف تنفيذ العقوبة','وقف تنفيذ'],['sq','سقوط عقوبة','سقوط عقوبة']];
 const mtId={};
 (function(){let ch=false;MT.forEach(([key,label,kw])=>{if(!kw){mtId[key]=TY0;return}
  let t=types.find(x=>x.id!==TY0&&String(x.name).replace(/\s+/g,' ').includes(kw));
  if(!t){t={id:'t'+key,name:label};types.push(t);ch=true}
+ if(key==='wq'&&t.name.trim()==='وقف تنفيذ'){t.name=label;ch=true}
  mtId[key]=t.id});if(ch)svT()})();
 let mtOrd=[];try{mtOrd=JSON.parse(gv('mtorder')||'[]')}catch(e){}if(!Array.isArray(mtOrd))mtOrd=[];
 const mtList=()=>{const keys=MT.map(x=>x[0]),o=mtOrd.filter(k=>keys.includes(k));keys.forEach(k=>{if(!o.includes(k))o.push(k)});return o.map(k=>MT.find(x=>x[0]===k))};
@@ -342,7 +426,7 @@ const sfx=k=>k.endsWith('N')?'N':k.endsWith('2')?'2':'';
 let mg='m',pin=null;try{pin=JSON.parse(gv('defmemo')||'null')}catch(e){}
 if(!pin||!pin.t||!pin.k)pin=null;
 const tkF=(tid,k)=>tid===TY0?'tpl_'+k:'tpl_'+tid+'_'+k;
-const isPin=(t,k)=>!!pin&&pin.t===t&&pin.k===k;
+const isPin=(t,k)=>!!pin&&pin.t===t;
 function selectMemo(tid,kk){
  if(!types.some(t=>t.id===tid))tid=TY0;
  if(hk.includes(kk)){hk=hk.filter(x=>x!==kk);sv('hkinds',JSON.stringify(hk))}
@@ -351,14 +435,17 @@ function syncUI(){
  const k=$('kd').value,oth=!isM(k)&&!isF(k);
  if(isM(k))mg='m';else if(isF(k))mg='f';
  $('gm').classList.toggle('on',!oth&&mg==='m');$('gf').classList.toggle('on',!oth&&mg==='f');
- const box=$('mt');box.innerHTML='';
- const ML=mtList();ML.forEach(([key,label],ix)=>{const tid=mtId[key],r=document.createElement('div');r.className='mr';r.innerHTML='<b>'+label+'</b>';
-  if(mtEdit){const up=document.createElement('button'),dn=document.createElement('button');up.className=dn.className='s';up.style.padding=dn.style.padding='6px 12px';
-   up.textContent='▲';dn.textContent='▼';up.disabled=ix===0;dn.disabled=ix===ML.length-1;up.onclick=()=>mtMove(key,-1);dn.onclick=()=>mtMove(key,1);r.append(up,dn)}
-  [['',' قضية'],['2','قضيتين'],['N','قضايا']].forEach(([sf,lbl])=>{const kk=mg+sf,has=!!gv(tkF(tid,kk))||(tid===TY0&&kk==='m');
-   const b=document.createElement('button');b.className='chp'+(cur===tid&&k===kk?' on':'');
-   b.textContent=(isPin(tid,kk)?'⭐ ':'')+(has?'✓ ':'')+lbl.trim();
-   b.onclick=()=>selectMemo(tid,kk);r.append(b)});box.append(r)});
+ const box=$('mt');box.innerHTML='';box.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-top:6px';
+ const ML=mtList();ML.forEach(([key,label],ix)=>{const tid=mtId[key],kk=isF(k)?'f':'m',own=!!gv(tkF(tid,kk))||(tid===TY0&&kk==='m'),der=!own&&dv0(tid,kk);
+  const b=document.createElement('button');b.className='chp'+(cur===tid?' on':'');
+  b.textContent=(isPin(tid,kk)?'⭐ ':'')+(own?'✓ ':der?'✨ ':'')+label;b.onclick=()=>selectMemo(tid,isF($('kd').value)?'f':'m');
+  if(!mtEdit){b.style.flex='1 1 30%';box.append(b);return}
+  const r=document.createElement('div');r.className='mr';r.style.flex='1 1 100%';
+  const up=document.createElement('button'),dn=document.createElement('button');up.className=dn.className='s';up.style.padding=dn.style.padding='6px 12px';
+  up.textContent='▲';dn.textContent='▼';up.disabled=ix===0;dn.disabled=ix===ML.length-1;up.onclick=()=>mtMove(key,-1);dn.onclick=()=>mtMove(key,1);
+  b.style.flex='1 1 120px';r.append(up,dn,b);box.append(r)});
+ {const ns=gv('nostay')==='1',nb=document.createElement('button');nb.className='chp'+(ns?' on':'');nb.textContent=(ns?'✓ ':'')+'حذف وقف التنفيذ';nb.style.width='100%';
+  nb.onclick=()=>{sv('nostay',gv('nostay')==='1'?'0':'1');nsShow();syncUI()};const nw=$('nsw');nw.innerHTML='';nw.append(nb)}
  const lab=(MT.find(([key])=>mtId[key]===cur)||[])[1]||tname();
  $('msel').textContent='المختارة: '+lab+' · '+(KN[k]||k);
  $('slb').textContent='عبارات: '+lab+' · '+(KN[k]||k);
@@ -368,11 +455,88 @@ function syncUI(){
 $('mord').onclick=()=>{mtEdit=!mtEdit;$('mord').textContent=mtEdit?'✓ تم':'⇅ ترتيب الأنواع';syncUI()};
 $('gm').onclick=()=>{mg='m';const k=$('kd').value;selectMemo(cur,isF(k)||!isM(k)?'m'+sfx(k):k)};
 $('gf').onclick=()=>{mg='f';const k=$('kd').value;selectMemo(cur,isM(k)||!isF(k)?'f'+sfx(k):k)};
-$('mpin').onclick=()=>{const k=$('kd').value;if(isPin(cur,k)){pin=null;dl('defmemo')}else{pin={t:cur,k};sv('defmemo',JSON.stringify(pin))}syncUI()};
+$('mpin').onclick=()=>{const k=$('kd').value;if(isPin(cur,k)){pin=null;dl('defmemo')}else{pin={t:cur,k:'m'};sv('defmemo',JSON.stringify(pin))}syncUI()};
 $('ko').onchange=()=>{const v=$('ko').value;if(!v)return;$('kd').value=v;loadLoc();tpl();chk();syncUI();saveDraft()};
 ['ty','tn','tr','td','kadd','kdel','kres'].forEach(i=>$(i).addEventListener(i==='ty'?'change':'click',()=>setTimeout(()=>{loadLoc();syncUI()},60)));
 const dry={plName:'',dfName:'',dfMore:0,no:'',yr:'',d:'',m:'',y:'',facts:'x'};
-function bytes(k){const own=gv(tk(k)),t0=cur===TY0,
+/* ===== قاموس التحويل: مدع→مدعية، قضية→قضيتين/قضايا ===== */
+const DICT0={
+F:`أقام => أقامت
+ويزعم => وتزعم
+يزعم => تزعم
+وذكر => وذكرت
+اسمه => اسمها
+ضده => ضدها
+نفسه => نفسها
+حريته => حريتها
+طلباته => طلباتها
+بطلباته => بطلباتها
+مختتماً => مختتمةً
+مختتما => مختتمةً
+دعواه => دعواها
+طالباً => طالبةً
+طالبا => طالبةً
+وأقام => وأقامت
+كان المدعي => كانت المدعية
+كان المدعى => كانت المدعية
+بزعم من انه مدرج => بزعم من انها مدرجة
+الحكم له => الحكم لها
+بحقه => بحقها
+مركزه => مركزها`,
+'2':`القضية المبينة => القضيتين المبينتين
+القضية محل => القضيتين محلا`,
+N:`القضية المبينة => القضايا المبينة
+القضية محل => القضايا محل`};
+const dictTxt=t=>{const v=gv('dict'+t);return v!=null&&v!==''?v:DICT0[t]};
+const AR_L='\\u0621-\\u064A';
+const escRx=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function rulesFor(tag){const out=[];
+ if(tag==='F')out.push([/مدع[يى](?![ةنا]|\s*(?:علي[هة]|العام))/g,()=>'مدعية','المدعي ← المدعية'],
+  [/(?<![\u0621-\u064A])كان(?=\s+(?:ال)?مدع[يى](?![ةنا]|\s*(?:علي[هة]|العام)))/g,()=>'كانت','كان ← كانت']);
+ dictTxt(tag).split('\n').forEach(l=>{if(l.trim().startsWith('#'))return;const m=l.split('=>');if(m.length<2)return;const a=m[0].trim(),b=m.slice(1).join('=>').trim();if(!a)return;
+  out.push([new RegExp('(?<!['+AR_L+'])'+a.split(/\s+/).map(escRx).join('\\s+')+'(?!['+AR_L+'])','g'),()=>b,a+' ← '+b]);
+  if(!/\s/.test(a)&&!/\s/.test(b)&&!/^[وف]/.test(a)){const pf=['و','ف'];pf.forEach(q=>out.push([new RegExp('(?<!['+AR_L+'])'+q+escRx(a)+'(?!['+AR_L+'])','g'),()=>q+b,q+a+' ← '+q+b]))}});
+ return out}
+function swapAll(p,rules,st){
+ const re=/<w:t(?: [^>]*)?>([^<]*)<\/w:t>/g,N=[];let m;
+ while((m=re.exec(p)))N.push({s:m.index,l:m[0].length,t:unesc(m[1])});
+ if(!N.length)return p;
+ const full=N.map(n=>n.t).join(''),sp=[];
+ rules.forEach(([rx,R],ri)=>{rx.lastIndex=0;let x;while((x=rx.exec(full))){if(!x[0].length){rx.lastIndex++;continue}sp.push({a:x.index,b:x.index+x[0].length,R:R(x),ri})}});
+ if(!sp.length)return p;
+ sp.sort((x,y)=>x.a-y.a||(y.b-y.a)-(x.b-x.a));
+ const keep=[];let end=-1;sp.forEach(x=>{if(x.a>=end){keep.push(x);end=x.b}});
+ if(st)keep.forEach(x=>{st[x.ri]=(st[x.ri]||0)+1});
+ let pos=0;N.forEach(n=>{n.n0=pos;pos+=n.t.length;n.n1=pos});
+ N.forEach(n=>{let out='',c=n.n0;
+  keep.forEach(x=>{if(x.b<=n.n0||x.a>=n.n1)return;out+=full.slice(c,Math.max(x.a,n.n0));if(x.a>=n.n0)out+=x.R;c=Math.min(x.b,n.n1)});
+  out+=full.slice(c,n.n1);n.nt=out});
+ let o=p;for(let i=N.length-1;i>=0;i--){const n=N[i];if(n.nt===n.t)continue;o=o.slice(0,n.s)+'<w:t xml:space="preserve">'+esc(n.nt)+'</w:t>'+o.slice(n.s+n.l)}
+ return o}
+function txtApply(str,tag){let s=String(str||'');rulesFor(tag).forEach(([rx,R])=>{rx.lastIndex=0;s=s.replace(rx,(...a)=>R(a))});return s}
+const DCACHE=new Map();
+function srcBytes(sk){const x=gv(tk(sk));return x?b64ToBytes(x):(sk==='m'&&cur===TY0?b64ToBytes(MALE):null)}
+function planFor(k){const own=x=>!!gv(tk(x))||(x==='m'&&cur===TY0);
+ if(k==='f')return own('m')?{src:'m',rules:['F']}:null;
+ if(k==='f2'||k==='fN'){const t=k==='f2'?'2':'N';if(own('f'))return{src:'f',rules:[t]};return own('m')?{src:'m',rules:['F',t]}:null}
+ if(k==='m2'||k==='mN'){const t=k==='m2'?'2':'N';return own('m')?{src:'m',rules:[t]}:null}
+ return null}
+async function dFiles(r,k){
+ const key=[cur,k,r.derive.src,r.derive.rules.join(''),r.derive.rules.map(dictTxt).join('¦'),(gv(tk(r.derive.src))||'').length].join('|');
+ if(DCACHE.has(key))return DCACHE.get(key);
+ const files=await readZip(r.b.buffer),doc=files.find(f=>f.name==='word/document.xml');
+ let xml=new TextDecoder().decode(doc.data);
+ const rules=r.derive.rules.flatMap(t=>rulesFor(t)),st={},ch=[];
+ xml=xml.replace(PRE,p=>{const q=swapAll(p,rules,st);if(q!==p&&ch.length<14)ch.push([ptext(p),ptext(q)]);return q});
+ const out={files:files.map(f=>f===doc?{name:f.name,data:new TextEncoder().encode(xml)}:f),stats:rules.map((x,i)=>[x[2],st[i]||0]).filter(x=>x[1]),changes:ch,total:Object.values(st).reduce((a,b)=>a+b,0)};
+ DCACHE.set(key,out);return out}
+async function filesOf(r,k){return r.derive?(await dFiles(r,k)).files:await readZip(r.b.buffer)}
+function bytes(k){const own=gv(tk(k));
+ if(own)return{b:b64ToBytes(own),n:''};
+ if(k==='m'){const x=srcBytes('m');return x?{b:x,n:''}:{b:null,n:'⚠ ارفع مذكرة «'+KN[k]+'» لنوع «'+tname()+'» من «المذكرات الأصلية» تحت.'}}
+ if(gv('autoder')!=='0'){const pl=planFor(k);if(pl)return{b:srcBytes(pl.src),n:'',derive:pl}}
+ return bytesOld(k)}
+function bytesOld(k){const own=gv(tk(k)),t0=cur===TY0,
  m=()=>{const x=gv(tk('m'))||gv(tk('m2'))||gv(tk('mN'));return x?b64ToBytes(x):(t0?b64ToBytes(MALE):null)},
  miss='⚠ ارفع مذكرة «'+KN[k]+'» لنوع «'+tname()+'» من «المذكرات الأصلية» تحت.';
  if(own)return{b:b64ToBytes(own),n:''};
@@ -389,9 +553,9 @@ function ksUpd(){const k=$('kd').value,own=gv(tk(k)),bi=k==='m'&&cur===TY0;
 $('kb').onclick=()=>{const k=$('kd').value;if((gv(tk(k))||(k==='m'&&cur===TY0))&&!confirm('استبدال مذكرة «'+KN[k]+'» لنوع «'+tname()+'»؟'))return;$('kf').click()};
 $('kf').onchange=async()=>{const f=$('kf').files[0],k=$('kd').value;$('kf').value='';if(!f)return;
  if(oldDoc(f.name)){say(OLDMSG,1);toast('الملف بصيغة .doc القديمة — حوّله لـ docx الأول.');return}
- try{const buf=await f.arrayBuffer();buildMemo(await readZip(buf),{...dry,kind:k,...locFor(k)});
-  sv(tk(k),bytesToB64(new Uint8Array(buf)));unl.delete(tk(k));tpl();chk();toast('اتحفظت مذكرة «'+KN[k]+'» ✓ — بتلاقيها تحت في «المذكرات الأصلية».')}
- catch(e){say('الملف ده مش مطابق لشكل المذكرة: '+e.message,1)}};
+ try{const buf=await f.arrayBuffer();await tryUpload(buf,cur,k,KN[k]+' — '+tname());
+  sv(tk(k),bytesToB64(new Uint8Array(buf)));unl.delete(tk(k));loadLoc();tpl();chk();toast('اتحفظت مذكرة «'+KN[k]+'» ✓ — بتلاقيها تحت في «المذكرات الأصلية».')}
+ catch(e){say(e.message==='اتلغى'?'اتلغى رفع المذكرة.':'الملف ده مش مطابق لشكل المذكرة: '+e.message,1)}};
 function mmUpd(r){const k=$('kd').value,lab=(MT.find(([key])=>mtId[key]===cur)||[])[1]||tname(),box=$('mm'),t=$('mmt'),b=$('mmb');
  if(!r.b){box.className='c mmw';t.style.color='#c0392b';t.textContent='⚠ مذكرة «'+KN[k]+'» لنوع «'+lab+'» لسه ما اترفعتش — ارفعها عشان تتولّد.';b.textContent='📎 رفع';b.hidden=false}
  else if(r.n){box.className='c mmi';t.style.color='#b9770e';t.textContent='ℹ '+r.n;b.textContent='📎 رفع الخاصة بيها';b.hidden=false}
@@ -399,39 +563,55 @@ function mmUpd(r){const k=$('kd').value,lab=(MT.find(([key])=>mtId[key]===cur)||
 $('mmb').onclick=()=>$('kb').click();
 function chk(){clearTimeout(ct);ct=setTimeout(async()=>{
  ksUpd();const r=bytes($('kd').value);$('kn').textContent=r.n;mmUpd(r);if(!r.b){$('lc').textContent='';return}
- try{buildMemo(await readZip(r.b.buffer),{...dry,kind:'m',...loc()});$('lc').textContent='✓ لقيت المكان في المذكرة';$('lc').className='ok'}
+ try{buildMemo(await filesOf(r,$('kd').value),{...dry,kind:'m',...loc()});$('lc').textContent='✓ لقيت المكان في المذكرة';$('lc').className='ok'}
  catch(e){$('lc').textContent='✗ '+e.message;$('lc').className='er'}},250)}
 $('kd').onchange=chk;
 ['s0','s1'].forEach(i=>$(i).oninput=()=>{sv(lkk(i[1],$('kd').value),$(i).value);chk()});
 $('s2').onclick=()=>{const k=$('kd').value;$('s0').value=D0;$('s1').value=D1;sv(lkk(0,k),D0);sv(lkk(1,k),D1);chk()};
 const unl=new Set();
+function askAnchors(msg,L,label,paras){return new Promise(res=>{
+ const ov=document.createElement('div');ov.className='ov';
+ ov.innerHTML='<div class="mb"><h3>المذكرة مش متطابقة مع مكان اللصق</h3>'
+  +'<div class="me" style="margin-bottom:6px">⛔ '+esc(msg)+'</div><small style="display:block;margin-bottom:8px">'+esc(label)+'</small>'
+  +'<label style="display:block;font-weight:600">عبارة البداية (آخر كلام قبل الطلبات اللي هتلصقها)</label><input id="aq0" style="width:100%;box-sizing:border-box">'
+  +'<label style="display:block;font-weight:600;margin-top:8px">عبارة النهاية (أول كلام بعد الطلبات)</label><input id="aq1" style="width:100%;box-sizing:border-box">'
+  +'<small style="display:block;margin:10px 0 4px">أو دوس على فقرة من مذكرتك وهتتحط في الخانة اللي واقف عليها:</small>'
+  +'<div id="aqp" style="max-height:170px;overflow:auto;border:1px solid var(--b);border-radius:10px"></div>'
+  +'<div class="r" style="margin-top:12px"><button class="go" id="aqy" style="margin:0;flex:1">✓ تطبيق (Enter)</button><button class="s" id="aqn">إلغاء</button></div></div>';
+ document.body.appendChild(ov);
+ const a0=ov.querySelector('#aq0'),a1=ov.querySelector('#aq1');a0.value=L.s0;a1.value=L.s1;let act=a0;
+ a0.onfocus=()=>act=a0;a1.onfocus=()=>act=a1;
+ const box=ov.querySelector('#aqp');
+ paras.slice(0,120).forEach(t=>{const d=document.createElement('div');d.style.cssText='padding:7px 10px;border-bottom:1px solid var(--b);cursor:pointer;font-size:13px';
+  d.textContent=t.length>80?t.slice(0,80)+'…':t;
+  d.onclick=()=>{if(act===a0){a0.value=t.replace(/[\s:：]+$/,'');a1.focus();a1.select()}else{a1.value=t.split(/\s+/).slice(0,6).join(' ')}};box.append(d)});
+ const done=v=>{ov.remove();res(v)},ok=()=>{const x=a0.value.trim(),y=a1.value.trim();if(!x||!y){toast('اكتب العبارتين.');return}done({s0:x,s1:y})};
+ ov.querySelector('#aqy').onclick=ok;ov.querySelector('#aqn').onclick=()=>done(null);
+ ov.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok()}else if(e.key==='Escape')done(null)});
+ setTimeout(()=>{a0.focus();a0.select()},50)})}
+async function tryUpload(buf,tid,k,label){const prev=cur;cur=tid;
+ try{let L=locFor(k);const fl=await readZip(buf),dc=fl.find(f=>f.name==='word/document.xml');
+  const paras=dc?(new TextDecoder().decode(dc.data).match(PRE)||[]).map(ptext).map(x=>x.trim()).filter(x=>x.length>=3):[];
+  for(;;){try{buildMemo(await readZip(buf),{...dry,kind:k,...L});break}
+   catch(err){const m=String(err.message||'');if(!/عبارة (البداية|النهاية)/.test(m))throw err;
+    const r=await askAnchors(m,L,label,paras);if(!r)throw Error('اتلغى');L=r}}
+  const c0=locFor(k);if(L.s0!==c0.s0||L.s1!==c0.s1){sv(lkk(0,k),L.s0);sv(lkk(1,k),L.s1)}
+ }finally{cur=prev}}
 const tpOpen=new Set();
 function tpl(){const box=$('tp');box.innerHTML='';
  const order=[...mtList().map(([key,label])=>[mtId[key],label]),...types.filter(t=>!Object.values(mtId).includes(t.id)).map(t=>[t.id,t.name])];
- for(const [tid,label] of order){
-  const ks=vis(),T=k=>tkF(tid,k),n=ks.filter(k=>gv(T(k))||(k==='m'&&tid===TY0)).length;
-  const d=document.createElement('details');d.open=tpOpen.has(tid)||tid===cur;
-  d.addEventListener('toggle',()=>{d.open?tpOpen.add(tid):tpOpen.delete(tid)});
-  const sm=document.createElement('summary');sm.style.cssText='margin:6px 0;font-weight:600;color:var(--t)';
-  sm.textContent=label+' — '+n+' من '+ks.length+' مرفوعة';d.append(sm);
-  for(const k of ks){const own=gv(T(k)),r=document.createElement('div');r.className='tr';
-   const bi=k==='m'&&tid===TY0;
-   r.innerHTML='<b>'+KN[k]+'</b><small>'+(own?(unl.has(T(k))?'✎ مفتوحة للتعديل':'🔒 محفوظة ومقفولة'):(bi?'الأصلية المدمجة':'لسه ما اترفعتش'))+'</small>';
-   const up=document.createElement('button');up.className='s';up.textContent=own||bi?'تغيير':'📎 رفع';
-   const fi=document.createElement('input');fi.type='file';fi.accept='.docx';fi.hidden=true;
-   up.onclick=()=>fi.click();
-   fi.onchange=async()=>{const f=fi.files[0];if(!f)return;if(oldDoc(f.name)){say(OLDMSG,1);fi.value='';return}
-    const prev=cur;
-    try{const buf=await f.arrayBuffer();cur=tid;buildMemo(await readZip(buf),{...dry,kind:k,...locFor(k)});cur=prev;
-     sv(T(k),bytesToB64(new Uint8Array(buf)));unl.delete(T(k));say('تم حفظ مذكرة «'+KN[k]+'» لنوع «'+label+'» ✓')}
-    catch(err){cur=prev;say('الملف ده مش مطابق لشكل المذكرة: '+err.message,1)}tpl();chk();syncUI()};
-   r.append(up,fi);
-   if(own&&!unl.has(T(k))){up.remove();const u=document.createElement('button');u.className='s';u.textContent='🔓 فتح للتعديل';
-    u.onclick=()=>{if(confirm('فتح مذكرة «'+KN[k]+'» لنوع «'+label+'» للتعديل؟')){unl.add(T(k));tpl()}};r.append(u)}
-   else if(own){const x=document.createElement('button');x.className='s';x.textContent=bi?'استعادة الأصلية':'حذف';
-    x.onclick=()=>{dl(T(k));tpl();chk();syncUI()};r.append(x)}
-   d.append(r)}
-  box.append(d)}}
+ for(const [tid,label] of order){const k='m',T=tkF(tid,k),own=gv(T),bi=tid===TY0,r=document.createElement('div');r.className='tr';
+  const fx=!!gv(tkF(tid,'f'));
+  r.innerHTML='<b>'+esc(label)+'</b><small>'+(own?(unl.has(T)?'✎ مفتوحة للتعديل':'🔒 محفوظة ومقفولة'):(bi?'الأصلية المدمجة':'لسه ما اترفعتش'))+(fx?' · + مدعية مخصوصة':'')+'</small>';
+  const up=document.createElement('button');up.className='s';up.textContent=own||bi?'تغيير':'📎 رفع';
+  const fi=document.createElement('input');fi.type='file';fi.accept='.docx';fi.hidden=true;up.onclick=()=>fi.click();
+  fi.onchange=async()=>{const f=fi.files[0];if(!f)return;if(oldDoc(f.name)){say(OLDMSG,1);fi.value='';return}
+   try{const buf=await f.arrayBuffer();await tryUpload(buf,tid,k,'مدع — '+label);sv(T,bytesToB64(new Uint8Array(buf)));unl.delete(T);say('تم حفظ مذكرة «'+label+'» ✓')}
+   catch(err){say(err.message==='اتلغى'?'اتلغى رفع المذكرة.':'الملف ده مش مطابق لشكل المذكرة: '+err.message,1)}loadLoc();tpl();chk();syncUI()};
+  r.append(up,fi);
+  if(own&&!unl.has(T)){up.remove();const u=document.createElement('button');u.className='s';u.textContent='🔓 فتح للتعديل';u.onclick=()=>{unl.add(T);tpl();toast('اتفتحت «'+label+'» للتعديل')};r.append(u)}
+  else if(own){const x=document.createElement('button');x.className='s';x.textContent=bi?'استعادة الأصلية':'حذف';x.onclick=()=>{dl(T);tpl();chk();syncUI()};r.append(x)}
+  box.append(r)}}
 rt();loadLoc();tpl();chk();
 // ---- tabs, draft, text cleaning, opinion memos, backup ----
 {const l=document.querySelector('.lg img').src;document.querySelector('link[rel=icon]').href=l;document.querySelector('link[rel=apple-touch-icon]').href=l}
@@ -475,7 +655,7 @@ function addFix(a,b){if(!a||a===b)return false;
  fixes=fixes.filter(f=>!(f.a===b&&f.b===a));
  const e=fixes.find(f=>f.a===a);if(e){if(e.b===b)return false;e.b=b}else fixes.push({a,b,n:0});svF();return true}
 function toast(t){let d=$('toast');if(!d){d=document.createElement('div');d.id='toast';
- d.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--a);color:#fff;padding:10px 16px;border-radius:12px;font-weight:600;z-index:99;max-width:90%;text-align:center;transition:opacity .3s';document.body.appendChild(d)}
+ d.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--a);color:#fff;padding:10px 16px;border-radius:12px;font-weight:600;z-index:400;max-width:90%;text-align:center;transition:opacity .3s';document.body.appendChild(d)}
  d.textContent=t;d.style.opacity=1;clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity=0,3500)}
 function learn(el){if(!el||el._snap==null)return;const a=el._snap,b=el.value;if(a===b)return;el._snap=b;if(!fxOn)return;
  const A=a.match(/\S+\s*/g)||[],B=b.match(/\S+\s*/g)||[],n=A.length,m=B.length;if(!n||!m||n*m>4e6||n>60000||m>60000)return;
@@ -500,7 +680,29 @@ function rf(){const L=$('fxl');if(!L)return;L.innerHTML='';
 function pasteIn(el,t){learn(el);ins(el,lensText(t));el._snap=el.value}
 function pasteClean(el){el.addEventListener('paste',e=>{const t=(e.clipboardData||window.clipboardData).getData('text');if(!t)return;e.preventDefault();el._pt=Date.now();pasteIn(el,t)});
  el.addEventListener('blur',()=>learn(el));el.addEventListener('change',()=>learn(el))}
-pasteClean($('fx'));
+pasteClean($('fx'));pasteClean($('cx'));
+(()=>{const el=$('cx');el._len=el.value.length;el.addEventListener('focus',()=>{el._len=el.value.length});
+ el.addEventListener('input',()=>{const n=el.value.length;if(Date.now()-(el._pt||0)>800&&n-el._len>40){const v=lensText(el.value);if(v!==el.value)el.value=v;el._snap=el.value}el._len=el.value.length})})();
+$('cl2').onclick=()=>{learn($('cx'));$('cx').value=lensText($('cx').value);$('cx')._snap=$('cx').value;saveDraft();cxUpd()};
+const CXR=/(القضي[ةه]|القضايا|الجناي[ةه]|الجنح[ةه]|جنح|جناية|محضر)\s*(رقم|أرقام|ارقام)|[\d٠-٩]+\s*(\/|لسنة|لسنه)\s*[\d٠-٩]+/;
+let cxSt='';
+let nsSt='';
+function nsVerdict(){const t=$('fx').value.replace(/[\u064B-\u065F\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/\s+/g,' ');
+ if(!t.trim())return 'empty';
+ if(/وقف ?(ال)?تنفيذ/.test(t))return 'has';
+ if(/وقف|تنفيذ|نفيذ|وق ف|ت نفيذ/.test(t))return 'doubt';
+ return 'none'}
+function nsShow(){const st=nsSt,on=gv('nostay')==='1',m=$('nss');if(!m)return;
+ m.textContent=st==='empty'?'الصق الطلبات الختامية وأنا أحدد تلقائي لو فيها وقف تنفيذ ولا لأ.'
+  :st==='has'?(on?'⚠ الطلبات فيها وقف تنفيذ وانتي معلّمة على الحذف — اتأكدي إنه مقصود.':'✓ الطلبات فيها وقف تنفيذ، فمش هيتشال.')
+  :st==='none'?(on?'✓ مفيش وقف تنفيذ في الطلبات، فعلّمت على حذف وقف التنفيذ تلقائي.':'⚠ مفيش وقف تنفيذ في الطلبات — علّمي على حذف وقف التنفيذ لو مش عايزاه في باقي المذكرة.')
+  :'⚠ مش متأكد: في كلمة قريبة من «وقف تنفيذ» (ممكن تكون اتقرأت غلط من Lens). راجعي الطلبات وعلّمي على المستطيل بإيدك.';
+ m.style.color=st==='doubt'||(st==='has'&&on)||(st==='none'&&!on)?'#b45309':'var(--a)'}
+function nsUpd(){const v=nsVerdict();if(v!==nsSt){nsSt=v;if(v==='none'&&gv('nostay')!=='1'){sv('nostay','1');syncUI()}else if(v==='has'&&gv('nostay')==='1'){sv('nostay','0');syncUI()}}nsShow()}
+function cxUpd(){nsUpd();const has=!!$('cx').value.trim(),inFx=CXR.test($('fx').value),d=$('cxd'),st=has?'has':inFx?'fx':'no';
+ $('cxs').textContent=has?'✓ القضية / القضايا المطلوب محوها: متحطة':inFx?'✓ القضية موجودة في الطلبات الملصوقة (الخانة اختيارية)':'⚠ القضية / القضايا المطلوب محوها — الصقها هنا';
+ if(st!==cxSt){cxSt=st;if(st==='no')d.open=true;else if(st==='fx')d.open=false}}
+$('fx').addEventListener('input',cxUpd);$('cx').addEventListener('input',cxUpd);
 (()=>{const el=$('fx');el._len=el.value.length;el.addEventListener('focus',()=>{el._len=el.value.length});
  el.addEventListener('input',()=>{const n=el.value.length;if(Date.now()-(el._pt||0)>800&&n-el._len>40){const v=lensText(el.value);if(v!==el.value)el.value=v;el._snap=el.value}el._len=el.value.length})})();
 $('cl').onclick=()=>{learn($('fx'));$('fx').value=lensText($('fx').value);$('fx')._snap=$('fx').value;saveDraft()};
@@ -520,7 +722,7 @@ $('otf').onchange=async()=>{const f=$('otf').files[0];$('otf').value='';if(!f)re
  catch(e){say2('الملف مش docx سليم.',1)}};
 // read case data from an uploaded defense memo (same layout the defense tab generates)
 async function readDef(buf){
- const out={no:'',yr:'',pl:'',df:''};
+ const out={no:'',yr:'',pl:'',df:'',facts:[],kind:'m',cs:''};
  try{const fs=await readZip(buf),d=fs.find(f=>f.name==='word/document.xml');if(!d)return out;
   const tx=(new TextDecoder().decode(d.data).match(PRE)||[]).map(ptext);
   const nm=t=>t.replace(/^\s*السيد[ةه]?\s*\/\s*/,'').split(/\s{2,}/)[0].trim();
@@ -528,7 +730,12 @@ async function readDef(buf){
   if(iD>=0)out.df=nm(tx[iD]);if(iP>=0)out.pl=nm(tx[iP]);
   if(iC>=0){const m=tx[iC].match(/رقم\s+(?:(\S+)\s+)?لسنة\s+(\S+)/);if(m){out.no=toAr(m[1]||'');out.yr=toAr(m[2]||'')}}
   const a=tx.findIndex(t=>/أقام\S*\s+(?:ال)?مدع/.test(t)),b=a<0?-1:tx.findIndex((t,i)=>i>=a&&/سالف[ةه]\s+البيان/.test(t));
-  if(a>=0&&b>=a){const ps=tx.slice(a,b+1).filter(t=>t.trim());out.n=ps.length;out.s=ps[0].trim().slice(0,60);out.e=ps[ps.length-1].trim().slice(-50)}
+  if(a>=0&&b>=a){const ps=tx.slice(a,b+1).filter(t=>t.trim());out.n=ps.length;out.s=ps[0].trim().slice(0,60);out.e=ps[ps.length-1].trim().slice(-50);out.facts=ps.map(t=>t.trim());
+   const w=ps.join(' ').replace(/[\u064B-\u065F\u0640]/g,'');
+   const g=w.match(/(?:المدعيتان|المدعيتين|المدعيات|المدعيان|المدعيين|المدعون|المدعين|المدعية|المدعي|المدعى)(?![\u0621-\u064A])/);
+   if(g)out.kind={المدعيتان:'fd',المدعيتين:'fd',المدعيات:'fp',المدعيان:'d',المدعيين:'d',المدعون:'p',المدعين:'p',المدعية:'f'}[g[0]]||'m'}
+  const all=tx.join('\n'),cm=all.match(/القضي[ةه]\s+رقم\s+[\d٠-٩]+\s+لسنة\s+[\d٠-٩]+\s*(?:جنح|جناي[ةه]|جنايات)[^\n]*?(?:مركز|قسم)\s+[^\s،.]+(?:\s+(?!و)[^\s،.]+)?/g);
+  if(cm)out.cs=[...new Set(cm.map(x=>x.replace(/\s+/g,' ').trim()))].join(' ، ')
  }catch(e){}
  return out}
 $('odb').onclick=()=>$('odf').click();
@@ -544,8 +751,9 @@ function ro(){const L=$('ol');L.innerHTML='';
   +'<div class="r"><input data-f="no" placeholder="رقم الدعوى" value="'+ea(o.f.no)+'"><input data-f="yr" placeholder="السنة" value="'+ea(o.f.yr)+'"></div>'
   +'<div class="r"><input data-f="pl" placeholder="المدعي" value="'+ea(o.f.pl)+'"></div>'
   +'<div class="r"><input data-f="df" placeholder="المدعى عليه" value="'+ea(o.f.df)+'"></div>'
+  +'<div class="r"><input data-f="cs" placeholder="القضية / القضايا المطلوب محوها (من مذكرة الدفاع أو الصقها من Lens)" value="'+ea(o.f.cs)+'"></div>'
   +'<div class="r" data-dr><span class="lb">تاريخ الحكم</span></div>'
-  +'<textarea rows="4" data-a placeholder="تطبيق الحكم — الصق من جوجل لينس">'+esc(o.app)+'</textarea>'
+  +'<textarea rows="4" data-a placeholder="تطبيق الحكم — الصق من جوجل لينس (مثال: القضية المشار إليها قضي فيها بانقضاء الدعوى الجنائية بمضى المدة)">'+esc(o.app)+'</textarea>'
   +'<div class="r" style="margin-top:8px"><button class="s" data-p>📋 إضافة من الحافظة</button><button class="s" data-c>✨ ترتيب</button></div>';
   d.querySelector('[data-x]').onclick=()=>{ops.splice(i,1);ro();saveDraft()};
   d.querySelectorAll('[data-f]').forEach(x=>x.oninput=()=>{o.f[x.dataset.f]=x.value;saveDraft()});
@@ -556,10 +764,74 @@ function ro(){const L=$('ol');L.innerHTML='';
   d.querySelector('[data-p]').onclick=async()=>{try{const t=(await navigator.clipboard.readText()).trim();if(t)pasteIn(ta,t)}
    catch(e){say2('المتصفح منع القراءة التلقائية — اضغط مطولاً جوه الخانة واختار لصق.',1)}};
   L.append(d)})}
-$('go2').onclick=()=>say2('قراءة بيانات مذكرات الدفاع شغالة. التوليد هيتفعّل بعد ما تبعت مذكرة الرأي الأصلية.',1);
+
+// ===== توليد مذكرة الرأي من القالب المحفوظ =====
+const frA=t=>String(t==null?'':t).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632);
+const OPW={ // kind -> [فعل, مرفوع, مجرور, ضمير المفرد (تسجيله), اسمه]
+ m:['يبتغى','المدعى','المدعي','ه','ه'],f:['تبتغى','المدعية','المدعية','ها','ها'],
+ d:['يبتغى','المدعيان','المدعيين','هما','هما'],fd:['تبتغى','المدعيتان','المدعيتين','هما','هما'],
+ p:['يبتغى','المدعون','المدعين','هم','هم'],fp:['تبتغى','المدعيات','المدعيات','هن','هن']};
+function caseCount(t){const n=(String(t).match(/القضي[ةه]\s+رقم/g)||[]).length;return n||(/القضايا|القضيتين/.test(t)?2:1)}
+async function genOpinion(tplBuf,o){
+ const fs=await readZip(tplBuf),dd=fs.find(f=>f.name==='word/document.xml');if(!dd)throw Error('قالب الرأي مش docx سليم');
+ let x=new TextDecoder().decode(dd.data);
+ const f=o.f,W=OPW[f.kind]||OPW.m,n=caseCount(f.cs),cs=(f.cs||'').trim(),ap=(o.app||'').trim();
+ const date=[o.dd,o.dm,o.dy].map(v=>frA(v||'').trim());
+ const dtxt=date.every(Boolean)?date[0]+' / '+date[1]+' / '+date[2]:null;
+ const pls=n===1?['القضية','سالفة الذكر']:n===2?['القضيتين','سالفتي الذكر']:['القضايا','سالفة الذكر'];
+ let first=-1,last=-1,tpl16=null;const P=[];
+ x.replace(PRE,(m,i)=>{P.push([m,i,ptext(m)]);return m});
+ P.forEach(([m,i,t],k)=>{if(first<0&&/أقام\S*\s+(?:ال)?مدع/.test(t)){first=k;tpl16=m}if(first>=0&&last<0&&k>=first&&/سالف[ةه]\s+البيان/.test(t))last=k});
+ if(first<0||last<first)throw Error('ما لقيتش فقرات الوقائع (من «أقام المدعي» لحد «سالفة البيان») في قالب الرأي');
+ const D='[\\u064B-\\u065F\\u0640]*';
+ const rulesFor1=(t)=>{const R=[];
+  if(/الدعوى\s*رق/.test(t)&&/لسنة/.test(t)){R.push([/(?<=رقـ*م\s*:\s*)[\d٠-٩]+/g,()=>frA(f.no)||'',0],[/(?<=لسنة\s*)[\d٠-٩]+/g,()=>frA(f.yr)||'',1])}
+  else if(/المقامة\s*م/.test(t))R.push([/(?<=مـ*ن\s*:\s*)\S[\s\S]*?(?=\s*$)/g,()=>f.pl||'',2]);
+  else if(/ضـ+د\s*:/.test(t))R.push([/(?<=د\s*:\s*)\S[\s\S]*?(?=\s*$)/g,()=>f.df||'',3]);
+  else if(/جـ*لسة\s*:/.test(t)&&dtxt)R.push([/(?<=:\s*)[\d٠-٩]+\s*\/\s*[\d٠-٩]+\s*\/\s*[\d٠-٩]+/g,()=>dtxt,4]);
+  else if(/ومن\s+حيث\s+انه\s+تطبيقا/.test(t)){
+   R.push([/يبتغى\s+المدعى/g,()=>W[0]+' '+W[1],5],[/تسجيل[هة]/g,()=>'تسجيل'+W[3],6]);
+   if(cs)R.push([/(?<=عن\s)القضي[ةه][\s\S]*$/g,()=>'\uE000'+cs+'\uE001',7])}
+  else if(/وحيث\s+قضى\s+الحكم/.test(t)){
+   R.push([/اسم\s+المدعي/g,()=>'اسم '+W[2],8],[/(?<=في\s)القضي[ةه](?=\s+سالف)/g,()=>pls[0],9],[/(?<=القضي[ةه]\s)سالف[ةه]\s+الذكر|(?<=القضيتين\s)سالف[ةه]\s+الذكر/g,()=>pls[1],10])}
+  else if(/ولما\s+كان\s+ذلك/.test(t)){
+   if(ap)R.push([/(?<=أن\s+)القضي[ةه]\s+المشار[\s\S]*?(?=\s*،?\s*مما\s+ينتفي)/g,()=>'\uE000'+ap+'\uE001',11]);
+   R.push([/(?<=مناط\s)تسجيله/g,()=>'تسجيل'+W[3],12],[/(?<=وإدراج\s)اسمه/g,()=>'اسم'+W[4],13])}
+  return R};
+ let out='',pos=0;
+ P.forEach(([m,i,t],k)=>{out+=x.slice(pos,i);pos=i+m.length;
+  if(k===first){const base=tpl16.replace(/<w:highlight [^>]*\/>/g,'');
+   out+=(f.facts||[]).map(tt=>rebuild(base,/./,tt)).join('');return}
+  if(k>first&&k<=last)return;
+  const R=rulesFor1(t);out+=R.length?swapAll(m,R,null):m});
+ out+=x.slice(pos);
+ out=out.replace(/<w:highlight w:val="yellow"\/>/g,'');
+ out=out.replace(/<w:r(?: [^>]*)?>(?:(?!<w:r[ >])[\s\S])*?<\/w:r>/g,r=>{
+  if(!/\uE000/.test(r))return r;
+  const rp=(r.match(/<w:rPr>([\s\S]*?)<\/w:rPr>/)||[])[1]||'',open=r.match(/^<w:r(?: [^>]*)?>/)[0],t=ptext(r),a=t.indexOf('\uE000'),b=t.indexOf('\uE001');
+  const mk=(txt,hl)=>txt?open+'<w:rPr>'+setProps(rp,hl?{highlight:'<w:highlight w:val="yellow"/>'}:{},RPR_ORD)+'</w:rPr><w:t xml:space="preserve">'+esc(txt)+'</w:t></w:r>':'';
+  return mk(t.slice(0,a),0)+mk(t.slice(a+1,b),1)+mk(t.slice(b+1),0)});
+ const nf=fs.map(z=>z.name==='word/document.xml'?{name:z.name,data:new TextEncoder().encode(out)}:z);
+ return writeZip(nf)}
+const opName=(o,i)=>('مذكرة_رأي_'+(o.f.no||i+1)+'_'+(o.f.yr||'')+'_'+(o.f.pl||'')).replace(/[\\\/:*?"<>|\n]/g,'-').slice(0,80);
+$('go2').onclick=async()=>{
+ const tb=gv('op_tpl');if(!tb){say2('ارفع قالب مذكرة الرأي الأول.',1);return}
+ if(!ops.length){say2('ارفع مذكرة دفاع واحدة على الأقل.',1);return}
+ const miss=[];ops.forEach((o,i)=>{const m=[];if(!(o.f.facts||[]).length)m.push('الوقائع');if(!(o.f.cs||'').trim())m.push('القضية المطلوب محوها');
+  if(!(o.app||'').trim())m.push('تطبيق الحكم');if(!(o.dd&&o.dm&&o.dy))m.push('تاريخ الحكم');if(m.length)miss.push((i+1)+'. '+o.name+' ← ناقص: '+m.join('، '))});
+ if(miss.length){say2('كمّل البيانات الناقصة:\n'+miss.join('\n'),1);$('st2').style.whiteSpace='pre-line';return}
+ $('go2').disabled=true;const tbuf=b64ToBytes(tb).buffer;const files=[],used=new Set();let bad=[];
+ for(let i=0;i<ops.length;i++){const o=ops[i];say2('… '+(i+1)+' / '+ops.length);
+  try{const b=await genOpinion(tbuf,o);let nm=opName(o,i),n=nm+'.docx',k=2;while(used.has(n))n=nm+'_'+(k++)+'.docx';used.add(n);
+   files.push({name:n,data:new Uint8Array(await b.arrayBuffer())})}catch(e){bad.push((i+1)+'. '+e.message)}}
+ $('go2').disabled=false;
+ if(files.length===1&&!bad.length)dlBlob(new Blob([files[0].data],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}),files[0].name);
+ else if(files.length)dlBlob(writeZip(files),'مذكرات_الرأي_'+files.length+'.zip');
+ say2(files.length?('تم توليد '+files.length+' مذكرة رأي ✓'+(bad.length?' — ومشكلة في: '+bad.join(' | '):'')):('ما اتولّدتش: '+bad.join(' | ')),!files.length)};
+
 
 // draft: keeps what you typed if the page is closed or reloaded
-const DF=['pn','dn','no','yr','d','m','y','fx','kd','dm'];
+const DF=['pn','dn','no','yr','d','m','y','fx','kd','dm','cx','ap'];
 let dtm;function saveDraft(){clearTimeout(dtm);dtm=setTimeout(()=>{const o={};DF.forEach(k=>o[k]=$(k).value);sv('draft',JSON.stringify(o));sv('draft_ops',JSON.stringify(ops));sv('draft_lv',JSON.stringify(lv));sv('draft_bt',JSON.stringify(bt))},400)}
 rkd();
 try{const o=JSON.parse(gv('draft')||'null');if(o)DF.forEach(k=>{if(o[k]!=null)$(k).value=o[k]})}catch(e){}
@@ -575,11 +847,11 @@ function rp(sel){const e=$('ps');e.innerHTML='';e.add(new Option('⚡ اختيا
 $('ps').onchange=()=>{const v=$('ps').value;if(!v)return;
  if(v==='none'){lv.forEach(x=>{x.on=false});saveDraft();rl();return}
  const pr=presets[+v.slice(1)];if(!pr)return;const ok=new Set(rdy().map(d=>d.id));ok.add('rej');let brk=false,lost=false;
- lv.forEach((x,k)=>{const q=pr.lv[k];if(!brk&&q&&q.on&&ok.has(q.id)){x.on=true;x.id=q.id}else{if(q&&q.on)lost=true;x.on=false;brk=true}});
+ lv.forEach((x,k)=>{const q=pr.lv[k];if(!brk&&q&&q.on&&ok.has(q.id)){x.on=true;x.id=q.id;x.sf=q.sf?JSON.parse(JSON.stringify(q.sf)):[]}else{if(q&&q.on)lost=true;x.on=false;brk=true}});
  saveDraft();rl();if(lost)toast('بعض دفوع الاختيار ده اتمسحت أو لسه مش مقفولة في المكتبة، فاتطبّق الجزء الصالح بس.')};
 $('psv').onclick=()=>{if(!lv[0].on){toast('اختار الدفوع الأول وبعدين احفظها.');return}
  const n=(prompt('اسم الاختيار السريع (مثال: عدم اقتران ثم 7 لسنة 2000):')||'').trim();if(!n)return;
- const o={name:n,lv:lv.map(x=>({on:x.on,id:x.id}))},i=presets.findIndex(x=>x.name===n);
+ const o={name:n,lv:lv.map(x=>({on:x.on,id:x.id,sf:JSON.parse(JSON.stringify(x.sf||[]))}))},i=presets.findIndex(x=>x.name===n);
  if(i>=0){if(!confirm('فيه اختيار بنفس الاسم. استبداله؟'))return;presets[i]=o}else presets.push(o);
  svP();rp('p'+(i>=0?i:presets.length-1));toast('اتحفظ ✓')};
 $('psd').onclick=()=>{const v=$('ps').value;if(!/^p\d+$/.test(v)){toast('اختار اختيار محفوظ الأول.');return}
@@ -595,9 +867,28 @@ let dfs=[];try{dfs=JSON.parse(gv('dfs')||'null')}catch(e){}
 if(!Array.isArray(dfs)||!dfs.length)dfs=['صفة','بطلان عريضة','عدم اقتران','7 لسنة 2000'].map((t,i)=>({id:'d'+i,title:t,m:'',f:'',lock:false}));
 dfs.forEach(d=>{if(d.req==null)d.req='';if(d.lock&&!d.req)d.lock=false});
 const svD=()=>sv('dfs',JSON.stringify(dfs));
-const LB=['أصلياً','احتياطياً','على سبيل الاحتياط','على سبيل الاحتياط الكلي'];
-let lv=[0,1,2,3].map(()=>({on:false,id:''}));
-try{const o=JSON.parse(gv('draft_lv')||'null');if(Array.isArray(o)&&o.length===4)lv=o.map(x=>({on:!!x.on,id:x.id||''}))}catch(e){}
+if(gv('dfsX2')!=='1'){const n0=dfs.length;dfs=dfs.filter(d=>!(/^ds[gcj]x*$/.test(String(d.id))&&!String(d.m||'').trim()&&!String(d.f||'').trim()&&!String(d.req||'').trim()));if(dfs.length!==n0)svD();sv('dfsX2','1')}
+const LB=['أصلياً','احتياطياً','على سبيل الاحتياط','على سبيل الاحتياط الكلي','على سبيل الاحتياط الجزئي'];
+let lv=[0,1,2,3].map(()=>({on:false,id:'',sf:[]}));
+try{const o=JSON.parse(gv('draft_lv')||'null');if(Array.isArray(o)&&o.length===4)lv=o.map(x=>({on:!!x.on,id:x.id||'',sf:Array.isArray(x.sf)?x.sf.map(e=>({o:(e&&e.o)||'',j:(e&&e.j)||''})):[]}))}catch(e){}
+const ORD=['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع','العاشر','الحادي عشر','الثاني عشر','الثالث عشر','الرابع عشر','الخامس عشر'];
+let ents=[];try{ents=JSON.parse(gv('ents')||'null')}catch(e){}
+if(!Array.isArray(ents)||!ents.length)ents=['وزير الداخلية','محافظ القاهرة','محافظ الجيزة','وزير العدل'];
+const svE=()=>sv('ents',JSON.stringify(ents));
+const isParam=d=>d&&d.param!=null?!!d.param:String((d||{}).title||'').trim()==='صفة';
+function sfInfo(sf){const E=(sf||[]).filter(e=>e&&(e.o||e.j));const n=E.length||1,jn=a=>a.map((p,i)=>i?' و'+p:p).join('');
+ const pcs=E.map(e=>[e.o,e.j?'('+e.j+')':''].filter(Boolean).join(' '));
+ const noun=n===1?'المدعى عليه':n===2?'المدعى عليهما':'المدعى عليهم',joined=jn(pcs);
+ return{nom:(noun+' '+joined).trim(),dat:('لل'+noun.slice(2)+' '+joined).trim(),ord:jn(E.map(e=>e.o).filter(Boolean)),ent:jn(E.map(e=>e.j).filter(Boolean)),has:E.length>0,pcs}}
+function sfSubst(t,sf){const I=sfInfo(sf);t=String(t||'');if(!I.has)return t;
+ const ordRx=new RegExp('المدع(?:ى|ي|ية)\\s+علي[هة]\\s+(?:'+ORD.join('|')+')(?:\\s*\\([^)]*\\)|\\s+محافظ\\s+(?:ال)?[\\u0621-\\u064A]+)?','g');
+ const names=ents.filter(e=>!/الداخلي/.test(e)).map(e=>e.trim().split(/\s+/).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('\\s+'));
+ const entRx=new RegExp('(?:'+names.concat(['محافظ\\s+(?:ال)?[\\u0621-\\u064A]+']).join('|')+')','g');
+ let o=t.replace(ordRx,'\u0001N\u0001');if(I.ent)o=o.replace(entRx,'\u0001E\u0001');
+ return o.replace(/\u0001N\u0001/g,I.nom).replace(/\u0001E\u0001/g,I.ent||'')}
+function sfFill(t,sf){const I=sfInfo(sf);return sfSubst(t,sf).replace(/\{المدعى عليه\}/g,I.nom).replace(/\{للمدعى عليه\}/g,I.dat).replace(/\{الترتيب\}/g,I.ord).replace(/\{الجهة\}/g,I.ent)}
+function sfReq(req,sf){const I=sfInfo(sf);if(I.has)req=String(req).replace(/\s*بالنسب[ةه]\s+لل?مدع[يى]\s+علي[هة][\s\S]*$/,'');if(/\{(المدعى عليه|للمدعى عليه|الترتيب|الجهة)\}/.test(req))return sfFill(req,sf);
+ if(!I.has)return req;const r=String(req).trim();return /بالنسبة$/.test(r)?r+' '+I.dat:r+' بالنسبة '+I.dat}
 const rdy=()=>dfs.filter(d=>d.lock&&d.title.trim()&&d.req.trim()&&d.m.trim()&&d.f.trim());
 function rl(){const L=$('lv');L.innerHTML='';const ok=rdy();
  if(!ok.length){const n=document.createElement('small');n.style.display='block';n.style.marginBottom='8px';n.textContent='لسه مفيش دفوع جاهزة — اكتب الدفوع في «مكتبة الدفوع» تحت واقفلها، وهتظهر هنا.';L.append(n)}
@@ -615,11 +906,25 @@ function rl(){const L=$('lv');L.innerHTML='';const ok=rdy();
    if(x.on){const u=new Set(lv.filter((y,j)=>j!==i&&y.on).map(y=>y.id));const f=!u.has('rej')?'rej':(ok.find(d=>!u.has(d.id))||{}).id;x.id=f||''}
    saveDraft();rl()};
   sel.onchange=()=>{x.id=sel.value;saveDraft();rl()};
-  row.append(lab,sel);L.append(row)})}
+  row.append(lab,sel);L.append(row);
+  const dd=dfs.find(z=>z.id===x.id);
+  if(x.on&&dd&&isParam(dd)){
+   if(!Array.isArray(x.sf)||!x.sf.length)x.sf=[{o:'',j:''}];
+   const bx=document.createElement('div');bx.style.cssText='margin:-2px 0 10px;padding:8px 10px;border:1px dashed var(--b);border-radius:10px';
+   x.sf.forEach((e,k)=>{const r2=document.createElement('div');r2.className='r';r2.style.marginBottom='6px';
+    const so=document.createElement('select');so.style.flex='1';so.add(new Option('المدعى عليه…',''));ORD.forEach(o=>so.add(new Option('المدعى عليه '+o,o)));so.value=e.o||'';
+    const sj=document.createElement('select');sj.style.flex='1';sj.add(new Option('الجهة…',''));ents.forEach(j=>sj.add(new Option(j,j)));sj.add(new Option('＋ جهة جديدة…','__new'));sj.value=e.j||'';
+    so.onchange=()=>{e.o=so.value;saveDraft()};
+    sj.onchange=()=>{if(sj.value==='__new'){const n=(prompt('اكتب اسم الجهة (مثال: محافظ الجيزة):')||'').trim();if(n){if(!ents.includes(n)){ents.push(n);svE()}e.j=n}saveDraft();rl()}else{e.j=sj.value;saveDraft()}};
+    r2.append(so,sj);
+    if(x.sf.length>1){const rm=document.createElement('button');rm.className='s';rm.textContent='✕';rm.onclick=()=>{x.sf.splice(k,1);saveDraft();rl()};r2.append(rm)}
+    bx.append(r2)});
+   const ad=document.createElement('button');ad.className='s';ad.textContent='＋ مدعى عليه آخر';ad.onclick=()=>{x.sf.push({o:'',j:''});saveDraft();rl()};bx.append(ad);
+   L.append(bx)}})}
 function rd(){const L=$('dfl');L.innerHTML='';
  dfs.forEach((d,i)=>{const w=document.createElement('div');w.className='it';
   if(d.lock){w.innerHTML='<div class="r"><b style="flex:1;font-weight:600">🔒 '+esc(d.title)+'</b><button class="s" data-u>🔓 فتح للتعديل</button></div>';
-   w.querySelector('[data-u]').onclick=()=>{if(confirm('فتح «'+d.title+'» للتعديل؟')){d.lock=false;svD();rd()}}}
+   w.querySelector('[data-u]').onclick=()=>{d.lock=false;svD();rd();toast('اتفتح «'+d.title+'» للتعديل — عدّل واضغط «حفظ وقفل»')}}
   else{w.innerHTML='<div class="r"><input data-t placeholder="اسم الدفع (للاختيار)" value="'+ea(d.title)+'"></div>'
    +'<small style="display:block;margin-top:8px">الطلب — بيتكتب بعد «نطلب الحكم» في الدفاع والطلبات الختامية</small><input data-r placeholder="مثال: بعدم قبول الدعوى لعدم اللجوء إلى لجان فض المنازعات" style="width:100%;margin-top:4px">'
    +'<small style="display:block;margin-top:8px">نص الدفع للمدعي (مذكر)</small><textarea rows="4" data-m style="margin-top:4px"></textarea>'
@@ -670,17 +975,25 @@ $('dnv').onclick=()=>{const v=$('dn').value.trim();if(!v)return;if(dfn.includes(
 $('dnd').onclick=()=>{const v=$('dn').value.trim();if(!dfn.includes(v)){toast('اختار الاسم المحفوظ الأول عشان يتمسح.');return}if(!confirm('مسح «'+v+'» من القايمة؟'))return;dfn=dfn.filter(x=>x!==v);svN();rdn()};
 rdn();
 // case helpers
-const curCase=()=>({kind:$('kd').value,plName:$('pn').value.trim(),dfName:$('dn').value.trim()||'وزير الداخلية',dfMore:+$('dm').value,no:$('no').value.trim(),yr:$('yr').value.trim(),d:$('d').value.trim(),m:$('m').value.trim(),y:$('y').value.trim(),facts:$('fx').value});
+const curCase=()=>({kind:$('kd').value,plName:$('pn').value.trim(),dfName:$('dn').value.trim()||'وزير الداخلية',dfMore:+$('dm').value,no:$('no').value.trim(),yr:$('yr').value.trim(),d:$('d').value.trim(),m:$('m').value.trim(),y:$('y').value.trim(),facts:$('fx').value,cases:$('cx').value,app:isApp()?$('ap').value:''});
+const OR=['أولاً','ثانياً','ثالثاً','رابعاً','خامساً','سادساً'];
+const isPre=d=>d&&d.pre!=null?!!d.pre:/^صفة/.test(String((d||{}).title||'').trim());
+function groupPre(L){const out=[];let buf=[];
+ L.forEach(it=>{if(it.rej){if(buf.length){out.push({rej:true,items:[...buf,it]});buf=[]}else out.push(it)}
+  else if(it.pre)buf.push(it);
+  else{buf.forEach(b=>out.push(b));buf=[];out.push(it)}});
+ buf.forEach(b=>out.push(b));return out}
+const withRej=L=>L.length&&!L.some(x=>x.rej)?[...L,{rej:true}]:L;
 function levelsFor(k,st){const act=st.filter(x=>x.on);if(!act.length)return null;const fm=/^f/.test(bk(k));
- return act.map(x=>{if(x.id==='rej')return{rej:true};const d=dfs.find(z=>z.id===x.id);if(!d)throw Error('دفع محذوف من المكتبة');return{title:d.title,req:d.req,text:fm?d.f:d.m}})}
+ return groupPre(withRej(act.map(x=>{if(x.id==='rej')return{rej:true};const d=dfs.find(z=>z.id===x.id);if(!d)throw Error('دفع محذوف من المكتبة');const P=isParam(d),sf=x.sf||[],tx0=fm?d.f:d.m;return{title:d.title,req:P?sfReq(d.req,sf):d.req,text:P?sfFill(tx0,sf):tx0,pre:isPre(d)}})))}
 const fname=c=>('مذكرة_'+(c.no||'')+'_'+c.yr+'_'+c.plName).replace(/[\\\/:*?"<>|\n]/g,'-').slice(0,80)+'.docx';
 // every digit written in the memo (including the template's own text) becomes Arabic-Indic
 function arFiles(fs){const td=new TextDecoder(),te=new TextEncoder();
  return fs.map(f=>/^word\/(document|header\d*|footer\d*|footnotes|endnotes)\.xml$/.test(f.name)?{...f,data:te.encode(td.decode(f.data).replace(/(<w:t(?: [^>]*)?>)([^<]*)(<\/w:t>)/g,(m,a,t,z)=>a+toAr(t)+z))}:f)}
-async function makeMemo(c){const r=bytes(c.kind);if(!r.b)throw Error(r.n);const o={...c,...locFor(c.kind)},L=levelsFor(c.kind,lv);if(L)o.levels=L;
- return writeZip(arFiles(buildMemo(await readZip(r.b.buffer),o)))}
+async function makeMemo(c){const r=bytes(c.kind);if(!r.b)throw Error(r.n);const o={...c,...locFor(c.kind),noStay:gv('nostay')==='1',fmt:gv('fmt')!=='0',a0:lgA(2,c.kind),a1:lgA(3,c.kind)},L=levelsFor(c.kind,lv);if(L)o.levels=L;
+ {const fl=buildMemo(await filesOf(r,c.kind),o);if(o.warns&&o.warns.length)toast('⚠ '+o.warns.join(' | '));return writeZip(arFiles(fl))}}
 function dlBlob(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
-function arc(c){arch.unshift({id:Date.now()+Math.random(),t:Date.now(),ty:cur,tn:tname(),c:{...c},lv:lv.map(x=>({on:x.on,id:x.id}))});svA()}
+function arc(c){arch.unshift({id:Date.now()+Math.random(),t:Date.now(),ty:cur,tn:tname(),c:{...c},lv:lv.map(x=>({on:x.on,id:x.id,sf:JSON.parse(JSON.stringify(x.sf||[]))}))});svA()}
 // warnings
 function warnShared(c){const w=[];
  if(/وآخر/.test(c.dfName)&&c.dfMore)w.push('المدعى عليه «'+c.dfName+'» فيه «وآخر» وإنت كمان مختار «'+DMN[c.dfMore]+'» — هتتكرر.');
@@ -689,7 +1002,8 @@ function warnShared(c){const w=[];
   else{const[dd,mm,yy]=D.map(Number),dt=new Date(yy,mm-1,dd);
    if(mm<1||mm>12||dd<1||dt.getMonth()!==mm-1)w.push('تاريخ الجلسة مش تاريخ صحيح.');
    else{const t0=new Date();t0.setHours(0,0,0,0);if(dt<t0)w.push('الجلسة في الماضي ('+dd+'/'+mm+'/'+yy+').')}}}
- const act=lv.filter(x=>x.on);if(act.length&&!act.some(x=>x.id==='rej'))w.push('مفيش «رفض الدعوى» في أي مستوى من الدفوع.');
+ const act=lv.filter(x=>x.on);
+ act.forEach(x=>{const d=dfs.find(z=>z.id===x.id);if(d&&isParam(d)&&!(x.sf||[]).some(e=>e&&e.o))w.push('دفع «'+d.title+'»: اختار ترتيب المدعى عليه (الأول/الثاني…) والجهة.')});
  return w}
 function validate(c,seen){const e=[],w=[];
  if(!c.plName)e.push('اكتب اسم المدعي.');
@@ -703,7 +1017,8 @@ function validate(c,seen){const e=[],w=[];
  if(seen){const k=c.no+'|'+c.yr+'|'+c.plName;if(c.no&&seen.has(k))w.push('مكررة في نفس الدفعة.');seen.add(k)}
  return{e,w}}
 function describe(c){const act=lv.filter(x=>x.on);
- const lvl=act.length?act.map((x,i)=>LB[i]+': '+(x.id==='rej'?'رفض الدعوى':((dfs.find(d=>d.id===x.id)||{}).title||'؟'))).join(' ← '):'بدون دفوع (المذكرة الأصلية)';
+ const lvl=act.length?(()=>{const G=groupPre(withRej(act.map(x=>{const d=dfs.find(z=>z.id===x.id)||{};return x.id==='rej'?{rej:true,title:'رفض الدعوى'}:{title:(d.title||'؟')+(isParam(d)&&sfInfo(x.sf).has?' ('+sfInfo(x.sf).pcs.join(' + ')+')':''),pre:isPre(d)}})).map(x=>x.rej&&!x.title?{...x,title:'رفض الدعوى (تلقائي)'}:x)),n=G.length;
+  return G.map((l,i)=>{const it=l.items||[l];return it.length===1?LB[i]+': '+it[0].title:(n>1?LB[i]+': ':'')+it.map((x,k)=>OR[k]+' '+x.title).join(' + ')}).join(' ← ')})():'بدون دفوع (المذكرة الأصلية)';
  const ses=[c.d,c.m,c.y].every(x=>x)?c.d+'/'+c.m+'/'+c.y:'على الورق';
  return[['النوع',tname()],['المدعى عليه',(c.dfName+' '+DMN[c.dfMore]).trim()],['الجلسة',ses],['الدفوع',lvl]]}
 // review dialog
@@ -723,20 +1038,21 @@ function review(o){return new Promise(res=>{
 // single memo
 const LC='lastcase';
 function rlc(){$('lcb').hidden=!gv(LC)}
-function snapCase(){const c={pn:$('pn').value,no:$('no').value,fx:$('fx').value,ty:cur,kd:$('kd').value};if(!c.pn&&!c.no&&!c.fx.trim())return;sv(LC,JSON.stringify(c));rlc()}
+function snapCase(){const c={pn:$('pn').value,no:$('no').value,fx:$('fx').value,cx:$('cx').value,ap:$('ap').value,ty:cur,kd:$('kd').value};if(!c.pn&&!c.no&&!c.fx.trim())return;sv(LC,JSON.stringify(c));rlc()}
 $('lcb').onclick=()=>{let o=null;try{o=JSON.parse(gv(LC)||'null')}catch(e){}if(!o)return;
  if(($('pn').value||$('no').value||$('fx').value.trim())&&!confirm('الاسترجاع هيحل محل البيانات الحالية. تكمل؟'))return;
- selectMemo(o.ty,o.kd);$('pn').value=o.pn;$('no').value=o.no;$('fx').value=o.fx;$('fx')._snap=o.fx;saveDraft();say('اتسترجعت القضية السابقة ✓')};
+ selectMemo(o.ty,o.kd);$('pn').value=o.pn;$('no').value=o.no;$('fx').value=o.fx;$('fx')._snap=o.fx;$('cx').value=o.cx||'';$('ap').value=o.ap||'';cxUpd();setTimeout(stepReset,50);saveDraft();say('اتسترجعت القضية السابقة ✓')};
 async function genOne(){try{
+ if(isApp()&&!$('ap').value.trim()&&!appSkip){const z=await askApp('gen');if(z==='cancel')return;if(z==='skip')appSkip=true}
  const c=curCase(),r=bytes(c.kind);if(!r.b){say(r.n,1);return}
  const v=validate(c,null),f=c.facts.trim();
  const shd={e:v.e,w:[...warnShared(c),...v.w]};if(!shd.e.length&&!shd.w.length&&gv('rvall')!=='1'){}else if(!(await review({title:'مراجعة قبل التوليد',ok:'تأكيد وتنزيل',
   lines:[['المدعي',(c.plName||'—')+' ('+(KN[c.kind]||'—')+')'],['الدعوى',(c.no||'—')+' لسنة '+(c.yr||'—')+' ق'],...describe(c),['الطلبات',f?f.slice(0,90)+(f.length>90?'…':''):'فاضية — بخط اليد']],
   shared:{e:v.e,w:[...warnShared(c),...v.w]},items:[]})))return;
- dlBlob(await makeMemo(c),fname(c));arc(c);ra();snapCase();['pn','no','fx'].forEach(k=>$(k).value='');$('fx')._snap=null;saveDraft();window.scrollTo({top:0,behavior:'smooth'});say('تم التنزيل ✓ — جاهز لقضية جديدة');if(window.matchMedia&&matchMedia('(pointer:fine)').matches)setTimeout(()=>$('pn').focus(),300)
+ dlBlob(await makeMemo(c),fname(c));arc(c);ra();appSkip=false;snapCase();['pn','no','fx','cx','ap'].forEach(k=>$(k).value='');$('fx')._snap=null;stepReset();saveDraft();window.scrollTo({top:0,behavior:'smooth'});say('تم التنزيل ✓ — جاهز لقضية جديدة');if(window.matchMedia&&matchMedia('(pointer:fine)').matches)setTimeout(()=>$('pn').focus(),300)
 }catch(err){say('حصل خطأ: '+err.message,1)}}
 $('go').onclick=genOne;
-$('nw').onclick=()=>{snapCase();['pn','no','fx'].forEach(k=>$(k).value='');$('fx')._snap=null;saveDraft();$('pn').focus();window.scrollTo({top:0,behavior:'smooth'});say('جاهز لقضية جديدة — النوع والمدعى عليه والجلسة والدفوع زي ما هي.')};
+$('nw').onclick=()=>{appSkip=false;snapCase();['pn','no','fx','cx','ap'].forEach(k=>$(k).value='');$('fx')._snap=null;stepReset();saveDraft();$('pn').focus();window.scrollTo({top:0,behavior:'smooth'});say('جاهز لقضية جديدة — النوع والمدعى عليه والجلسة والدفوع زي ما هي.')};
 // batch
 function rbt(){const L=$('btl');L.innerHTML='';
  if(!bt.length)L.innerHTML='<small style="display:block;margin-top:8px">لسه مفيش صفوف. اضغط «＋ صف».</small>';
@@ -764,9 +1080,165 @@ $('btg').onclick=async()=>{const st=$('bts');st.textContent='';try{
 function openRec(a){
  if(a.ty!==cur){if(types.some(t=>t.id===a.ty)){cur=a.ty;sv('ty',cur);rt();loadLoc();tpl()}else toast('نوع المذكرة اتمسح — اتفتحت على النوع الحالي.')}
  const c=a.c;$('kd').value=okK(c.kind);loadLoc();chk();syncUI();$('pn').value=c.plName;$('dn').value=c.dfName;$('dm').value=c.dfMore;
- ['no','yr','d','m','y'].forEach(k=>$(k).value=c[k]||'');$('fx').value=c.facts||'';$('fx')._snap=null;
- lv=(a.lv||[]).map(x=>({on:!!x.on,id:x.id||''}));while(lv.length<4)lv.push({on:false,id:''});rl();chk();saveDraft();
+ ['no','yr','d','m','y'].forEach(k=>$(k).value=c[k]||'');$('fx').value=c.facts||'';$('fx')._snap=null;$('cx').value=c.cases||'';$('ap').value=c.app||'';cxUpd();setTimeout(stepReset,50);
+ lv=(a.lv||[]).map(x=>({on:!!x.on,id:x.id||'',sf:Array.isArray(x.sf)?JSON.parse(JSON.stringify(x.sf)):[]}));while(lv.length<4)lv.push({on:false,id:'',sf:[]});rl();chk();saveDraft();
  document.querySelector('.tb button[data-t="pd"]').click();window.scrollTo({top:0,behavior:'smooth'})}
+function modal(html){const ov=document.createElement('div');ov.className='ov';ov.innerHTML='<div class="mb">'+html+'</div>';document.body.appendChild(ov);return ov}
+/* ===== معاينة التوليد + قاموس التحويل ===== */
+async function showDerive(){const k=$('kd').value,r=bytes(k);if(!r.derive)return;const d=await dFiles(r,k);
+ const ov=modal('<h3>معاينة التوليد التلقائي</h3><small>«'+esc(KN[k])+'» بتتولّد من «'+esc(KN[r.derive.src])+'» — اتغيّر '+d.total+' موضع:</small>'
+  +(d.stats.length?d.stats.map(x=>'<div class="rv"><span>'+x[1]+'×</span><b>'+esc(x[0])+'</b></div>').join(''):'<div class="mw">مفيش أي تغيير — القاموس ما لقاش كلمات يغيّرها.</div>')
+  +(d.changes.length?'<small style="display:block;margin-top:10px">أمثلة من الفقرات المتغيّرة:</small>'+d.changes.map(c=>'<div style="padding:6px 0;border-bottom:1px solid var(--b)"><div style="font-size:12px;opacity:.7">قبل: '+esc(c[0].slice(0,170))+'</div><div style="font-size:13px">بعد: '+esc(c[1].slice(0,170))+'</div></div>').join(''):'')
+  +'<div class="r" style="margin-top:12px"><button class="s" id="dvd" style="flex:1">⚙ تعديل القاموس</button><button class="go" id="dvx" style="margin:0;flex:1">إغلاق</button></div>');
+ ov.querySelector('#dvx').onclick=()=>ov.remove();ov.querySelector('#dvd').onclick=()=>{ov.remove();editDict()}}
+function editDict(){const T=[['F','مدعية (من مدع)']];
+ const ov=modal('<h3>قاموس التحويل</h3><small>كل سطر: <b>الكلمة أو العبارة ⇐ بديلها</b> بالشكل ده: <code>أقام => أقامت</code>. التطابق بكلمة كاملة. «المدعي ← المدعية» مدمج وتلقائي.</small><select id="edt" style="width:100%;margin-top:8px"></select><textarea id="edx" rows="10" style="width:100%;margin-top:8px;box-sizing:border-box"></textarea><small id="edm" style="display:block;margin-top:6px;color:#2e8b57;font-weight:600"></small><div class="r" style="margin-top:10px"><button class="go" id="eds" style="margin:0;flex:1">✓ حفظ</button><button class="s" id="edr">↺ الافتراضي</button><button class="s" id="edc">إغلاق</button></div>');
+ const sl=ov.querySelector('#edt'),ta=ov.querySelector('#edx');T.forEach(([v,l])=>sl.add(new Option(l,v)));const ld=()=>{ta.value=dictTxt(sl.value)};sl.onchange=ld;ld();
+ ov.querySelector('#eds').onclick=()=>{sv('dict'+sl.value,ta.value);DCACHE.clear();chk();ov.querySelector('#edm').textContent='✓ اتحفظ القاموس ('+ta.value.split('\n').filter(l=>l.includes('=>')).length+' قاعدة)';toast('اتحفظ القاموس ✓')};
+ ov.querySelector('#edr').onclick=()=>{dl('dict'+sl.value);DCACHE.clear();ld();chk();ov.querySelector('#edm').textContent='↺ رجع للقاموس الافتراضي'};ov.querySelector('#edc').onclick=()=>ov.remove()}
+function mmUpd(r){const k=$('kd').value,lab=(MT.find(([key])=>mtId[key]===cur)||[])[1]||tname(),box=$('mm'),t=$('mmt'),b=$('mmb'),v=$('mmv'),a=$('mma');v.hidden=a.hidden=true;
+ if(!r.b){box.className='c mmw';t.style.color='#c0392b';t.textContent='⚠ مذكرة «'+KN[k]+'» لنوع «'+lab+'» لسه ما اترفعتش — ارفعها عشان تتولّد.';b.textContent='📎 رفع';b.hidden=false}
+ else if(r.derive){box.className='c mmi';t.style.color='#b9770e';t.textContent='✨ مذكرة «'+KN[k]+'» بتتولّد تلقائياً من «'+KN[r.derive.src]+'» — راجع المعاينة.';b.textContent='📎 رفع الخاصة بيها';b.hidden=false;v.hidden=a.hidden=false}
+ else if(r.n){box.className='c mmi';t.style.color='#b9770e';t.textContent='ℹ '+r.n;b.textContent='📎 رفع الخاصة بيها';b.hidden=false}
+ else{box.className='c mmo';t.style.color='';t.textContent='✓ المذكرة الأصلية جاهزة';b.hidden=true}}
+$('mmv').onclick=showDerive;$('dict').onclick=editDict;
+$('mma').onclick=async()=>{const k=$('kd').value,r=bytes(k);if(!r.derive)return;const d=await dFiles(r,k);
+ sv(tk(k),bytesToB64(new Uint8Array(await writeZip(d.files).arrayBuffer())));unl.delete(tk(k));say('اتعتمدت مذكرة «'+KN[k]+'» ✓ وبقت مذكرة أصلية محفوظة');tpl();chk();syncUI()};
+$('fmtc').checked=gv('fmt')!=='0';$('fmtc').onchange=()=>sv('fmt',$('fmtc').checked?'1':'0');
+$('adc').checked=gv('autoder')!=='0';$('adc').onchange=()=>{sv('autoder',$('adc').checked?'1':'0');DCACHE.clear();tpl();chk()};
+/* ===== تعرّف على النوع (ذكر/أنثى) من الاسم ===== */
+const GN_NORM=s=>String(s==null?'':s).replace(/[\u064B-\u065F\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ئ/g,'ي').replace(/ؤ/g,'و').replace(/\s+/g,' ').trim();
+const GN_F=new Set(`فاطمة عائشة عايشة مريم زينب سعاد سعدية نادية نادين نورا هدى منى سلمى ليلى ندى رضوى نجوى هبة هالة هناء هند سمر سمية سماح سهير سحر سارة سالي سلوى شيماء شيرين شذى صفاء صباح صفية ضحى عزة عفاف علا عبير غادة غدير فرح فاتن فريدة فوزية فايزة كريمة لمياء لبنى لطيفة لميس ماجدة مها مروة ماريا مارينا ميرفت ميادة منال منار منة ميار ميرنا مي ميمي نجلاء نجاة نسمة نهى نيفين نبيلة نعمة نرمين نوال هاجر هايدي هيام وفاء ولاء وداد ياسمين يمنى يسرى يارا إيمان ايمان أمل آمال أماني أميرة أسماء آلاء أمينة اميمة إيناس إجلال إخلاص إسراء إنجي إلهام أروى آية ايه ابتسام ابتهال احلام اسيل بسمة بسنت بدور بثينة بهية بوسي تحية تقى تسنيم جيهان جميلة جمالات جنى حنان حنين حسناء حليمة حياة حبيبة حورية خديجة خلود خيرية دعاء دينا دنيا دلال داليا درة رحمة رباب رانيا ربا رشا رقية ريهام ريم ريما رنا رغدة روضة رويدا رحاب زهرة زكية زهراء زبيدة سامية سناء سوزان سيدة ست سوسن شادية شروق شهيرة شريفة شاهندة صابرين عالية عزيزة عطيات علياء عواطف عبلة فادية فتحية فكرية فيروز فردوس كوثر كاميليا لينا ليلة مديحة مبروكة محاسن مشيرة معالي ملك ملاك منيرة مهجة ميسون ناهد نادرة ناجية نانسي نشوى نورهان نورة نهال هويدا هيفاء وجيهة وردة وسيلة`.split(/\s+/).map(GN_NORM));
+const GN_M=new Set(`محمد أحمد محمود مصطفى علي حسن حسين ابراهيم إبراهيم اسماعيل إسماعيل يوسف يعقوب اسحاق عمر عثمان خالد سعيد سعد سيد سمير سامي سامح صلاح طارق عادل عاطف عامر عصام عماد عمرو عوض عيد فتحي فؤاد فاروق فكري فوزي فريد فادي فارس كريم كمال لطفي ماجد مجدي ماهر مدحت مراد مرسي مسعد مصباح معتز ممدوح منصور منير مهدي مؤمن موسى ناصر نبيل نادر نجيب نصر نعمان هاني هشام هلال هيثم وائل وجدي وحيد وليد وسيم ياسر ياسين يحيى يونس زكريا زكي زياد زين رضا رمضان رشاد رفعت رأفت رجب رشدي رامي رامز ربيع ريان ساهر سلطان سليمان سليم شعبان شريف شادي شاكر شوقي شهاب صابر صبحي صبري صفوت طلعت طه عاصم عباس عبده عزت علاء عنتر غريب فهمي قاسم قدري كامل لؤي مالك مبارك متولي محسن مختار مرتضى مروان معاذ مكرم منتصر مهند ميخائيل مينا بيشوي بولس جرجس جورج جمال جمعة جابر جلال حاتم حازم حامد حمدي حمزة حمدان حنفي خليل خميس خيري دسوقي دياب راضي راشد رزق رياض زغلول سالم سامر سراج سيف سنوسي شحاتة شرف شكري صادق صالح أسامة معاوية طلحة عروة قتيبة خليفة عكرمة`.split(/\s+/).map(GN_NORM));
+const GN_AMB=new Set(['نور','وسام','ضياء','ملاك','جهاد','شهد','عطية','سلامة','رحمة'].map(GN_NORM));
+const GN_TF=new Set(['السيده','المواطنه','الاستاذه','الدكتوره','المدعيه','مواطنه'].map(GN_NORM)),GN_TM=new Set(['السيد','المواطن','الاستاذ','الدكتور','مواطن'].map(GN_NORM));
+function gnFirst(name){const w=GN_NORM(name).replace(/[\/\\،,\-\.\(\)]+/g,' ').split(' ').filter(Boolean);while(w.length&&(GN_TF.has(w[0])||GN_TM.has(w[0])))w.shift();return w[0]||''}
+function gnGuess(name){const n=GN_NORM(name).replace(/[\/\\،,\-\.\(\)]+/g,' ').split(' ').filter(Boolean);if(!n.length)return '';
+ if(GN_TF.has(n[0]))return 'f';if(GN_TM.has(n[0]))return 'm';
+ const f=gnFirst(name);if(!f)return '';let L={};try{L=JSON.parse(gv('gnames')||'{}')}catch(e){}
+ if(L[f])return L[f];const full=' '+n.join(' ')+' ';
+ if(f==='ام'||f==='ست'||/ (بنت|ابنه) /.test(full))return 'f';
+ if(f==='ابو'||f==='عبد'||(f.startsWith('عبد')&&f.length>3))return 'm';
+ if(GN_AMB.has(f))return '';
+ if(GN_F.has(f))return 'f';if(GN_M.has(f))return 'm';
+ if(f.endsWith('ه')&&f.length>=4)return 'f';
+ return ''}
+function askGender(nm){return new Promise(res=>{const ov=modal('<h3>المدعي ده مدع ولا مدعية؟</h3><div class="rv"><span>الاسم</span><b>'+esc(nm)+'</b></div><div class="r" style="margin-top:12px"><button class="go" id="gq1" style="margin:0;flex:1">مدع</button><button class="go" id="gq2" style="margin:0;flex:1">مدعية</button></div><label class="ck" style="margin-top:10px"><input type="checkbox" id="gqm" checked><span>افتكر الاسم الأول ده المرات الجاية</span></label><button class="s" id="gqx" style="width:100%;margin-top:8px">إلغاء</button>');
+ const d=v=>{const m=ov.querySelector('#gqm').checked;ov.remove();res({g:v,mem:m})};
+ ov.querySelector('#gq1').onclick=()=>d('m');ov.querySelector('#gq2').onclick=()=>d('f');ov.querySelector('#gqx').onclick=()=>d('')})}
+async function nameGender(){const nm=$('pn').value.trim();if(!nm)return;const k=$('kd').value;if(!isM(k)&&!isF(k))return;
+ let g=gnGuess(nm);
+ if(!g){const z=await askGender(nm);g=z.g;if(!g)return;if(z.mem&&!GN_AMB.has(gnFirst(nm))){let L={};try{L=JSON.parse(gv('gnames')||'{}')}catch(e){}L[gnFirst(nm)]=g;sv('gnames',JSON.stringify(L))}}
+ if(g!==(isM(k)?'m':'f')){selectMemo(cur,g);toast(g==='f'?'الاسم مدعية — اتحوّلت المذكرة لـ «مدعية»':'الاسم مدع — اتحوّلت المذكرة لـ «مدع»')}}
+$('pn').addEventListener('change',()=>{nameGender()});
+/* ===== رفع كل المذكرات مرة واحدة ===== */
+const normT=GN_NORM;
+async function docParas(x){const fl=Array.isArray(x)?x:await readZip(x),dc=fl.find(f=>f.name==='word/document.xml');return dc?(new TextDecoder().decode(dc.data).match(PRE)||[]).map(ptext).map(x=>x.replace(/\s+/g,' ').trim()):[]}
+function guessDoc(name,paras){const F=normT(name),all=normT(paras.join(' ')),T=all.slice(0,9000),cnt=(x,r)=>(x.match(r)||[]).length;let key='t0',sure=false;
+ const jn=x=>cnt(x,/جناي/g)>=cnt(x,/جنح/g)?'rdj':'rdh';
+ if(/رد ?الاعتبار|رد ?اعتبار/.test(F)){key=/جناي/.test(F)?'rdj':/جنح/.test(F)?'rdh':jn(T);sure=/جناي|جنح/.test(F)}
+ else if(/سقوط/.test(F)){key='sq';sure=true}else if(/وقف ?تنفيذ/.test(F)){key='wq';sure=true}else if(/عاد/.test(F)){key='t0';sure=true}
+ else if(/رد الاعتبار|رد اعتبار/.test(T))key=jn(T);else if(/سقوط العقوبه/.test(T))key='sq';else if(/وقف تنفيذ/.test(T))key='wq';else key='t0';
+ const fem=cnt(all,/المدعيه/g)>0||/مدعيه/.test(F),n2=cnt(all,/قضيتين|قضيتان/g),nN=cnt(all,/القضايا|قضايا/g);
+ const kind=fem?'f':'m';return{key,kind,sure}}
+$('bulk').onclick=()=>$('bkf').click();
+$('bkf').onchange=async()=>{const fs=[...$('bkf').files];$('bkf').value='';if(!fs.length)return;const rows=[];
+ for(const f of fs){if(oldDoc(f.name)){say(OLDMSG,1);continue}
+  try{const buf=await f.arrayBuffer(),g=guessDoc(f.name,await docParas(buf));rows.push({name:f.name,buf,tid:mtId[g.key],k:g.kind,sure:g.sure})}catch(e){say('ما قدرتش أقرا «'+f.name+'»',1)}}
+ if(!rows.length)return;
+ const ov=modal('<h3>رفع المذكرات — راجع النوع والصيغة</h3><small>البرنامج خمّن نوع كل ملف من اسمه ونصه. صحّح لو فيه غلط ثم «حفظ الكل». ⚠ = تخمين من النص.</small><div id="bkl" style="margin-top:8px"></div><div class="r" style="margin-top:12px"><button class="go" id="bks" style="margin:0;flex:1">✓ حفظ الكل</button><button class="s" id="bkc">إلغاء</button></div>');
+ const L=ov.querySelector('#bkl'),KS=['m','f'];
+ const draw=()=>{L.innerHTML='';rows.forEach((r,i)=>{const d=document.createElement('div');d.className='it';
+  const dup=rows.some((o,j)=>j!==i&&o.tid===r.tid&&o.k===r.k),old=!!gv(tkF(r.tid,r.k));
+  d.innerHTML='<b style="word-break:break-all;font-size:13px">'+esc(r.name)+'</b><small style="display:block;margin:2px 0 6px;color:'+(dup?'#c0392b':'#b9770e')+'">'+(dup?'⚠ مكرر مع ملف تاني — الأخير هو اللي هيتحفظ':(!r.sure?'⚠ تخمين من النص — اتأكد':''))+(old&&!dup?' 🔁 هيستبدل المحفوظة':'')+'</small>';
+  const w=document.createElement('div');w.className='r';const st=document.createElement('select'),sk=document.createElement('select');st.style.flex=sk.style.flex='1';
+  mtList().forEach(([key,label])=>st.add(new Option(label,mtId[key])));st.value=r.tid;KS.forEach(x=>sk.add(new Option(KN[x],x)));sk.value=r.k;
+  st.onchange=()=>{r.tid=st.value;r.sure=true;draw()};sk.onchange=()=>{r.k=sk.value;draw()};w.append(st,sk);d.append(w);L.append(d)})};draw();
+ ov.querySelector('#bkc').onclick=()=>ov.remove();
+ ov.querySelector('#bks').onclick=async()=>{ov.remove();let ok=0,sk=0;const bad=[];
+  for(const r of rows){const label=(types.find(t=>t.id===r.tid)||{}).name||'';
+   try{await tryUpload(r.buf,r.tid,r.k,KN[r.k]+' — '+label);sv(tkF(r.tid,r.k),bytesToB64(new Uint8Array(r.buf)));unl.delete(tkF(r.tid,r.k));ok++}
+   catch(e){if(e.message==='اتلغى')sk++;else bad.push(r.name)}}
+  loadLoc();tpl();chk();syncUI();say('اتحفظ '+ok+' مذكرة ✓'+(sk?' · اتخطّى '+sk:'')+(bad.length?' · ما اتحفظش (مش مطابق): '+bad.join('، '):''),bad.length?1:0)}};
+/* ===== استيراد الدفوع الشكلية من مذكرات ===== */
+const HDR=/^(?:[أإا]ولا|ثانيا|ثالثا|رابعا|خامسا|سادسا|[أإا]صليا|احتياطيا|عل[يى] سبيل الاحتياط[^:\-–]{0,30})\s*[:：\-–]\s*/;
+async function parseDefs(buf,name){const ps=await docParas(buf),td=ps.map(x=>x.replace(/[\u064B-\u065F\u0640]/g,'').trim()),N=ps.map(GN_NORM),fem=/المدعيه/.test(N.join(' '));
+ let a=N.findIndex(t=>t==='الدفاع');a=a<0?0:a+1;let b=N.findIndex((t,i)=>i>a&&/^(بناء عليه|لذلك|لما تقدم|ولما تقدم)/.test(t));if(b<0)b=ps.length;
+ const bl=[];let cu=null;
+ for(let i=a;i<b;i++){if(!ps[i])continue;const hd=HDR.test(td[i])||/^الدفع ب/.test(td[i])||(/^(بعدم|ببطلان)/.test(td[i])&&ps[i].length<220);
+  if(hd){cu={head:td[i].replace(HDR,'').trim(),body:[]};bl.push(cu)}else if(cu)cu.body.push(ps[i])}
+ const KN4=[['صفة',/غير ذي صفه|انتفاء الصفه/],['بطلان عريضة',/بطلان (عريضه|صحيفه)/],['عدم اقتران',/اقتران/],['7 لسنة 2000',/(7|٧) لسنه|لجان التوفيق/]],out=[];
+ bl.forEach(x=>{const hn=GN_NORM(x.head);let title=null;
+  for(const [tt,rx] of KN4)if(rx.test(hn)){title=tt;break}
+  if(!title){if(/رفض الدعوي|الموضوع/.test(hn)&&!/عدم قبول|بطلان|اختصاص/.test(hn))return;if(!/عدم قبول|عدم اختصاص|عدم جواز|سقوط|تقادم|انقضاء|حجيه|بطلان|^الدفع ب/.test(hn))return;title=x.head.replace(/^الدفع\s+/,'').slice(0,40)}
+  let req=x.head.replace(/^الدفع\s+/,'').replace(/[\s:：]+$/,'');if(/^(عدم|بطلان)/.test(GN_NORM(req)))req='ب'+req;
+  if(title==='صفة')req=req.replace(/\s*بالنسب[ةه]\s+لل?مدع[يى]\s+علي[هة][\s\S]*$/,'');
+  out.push({title,req,text:x.body.join('\n'),fem,src:name})});
+ return out}
+$('dimp').onclick=$('dimp2').onclick=()=>$('dimf').click();
+$('dimf').onchange=async()=>{const fs=[...$('dimf').files];$('dimf').value='';if(!fs.length)return;const M=new Map();let nf=0;
+ for(const f of fs){if(oldDoc(f.name)){say(OLDMSG,1);continue}
+  try{const items=parseDefs(await f.arrayBuffer(),f.name);for(const it of await items){const key=GN_NORM(it.title),e=M.get(key)||{title:it.title,req:it.req,m:'',f:'',der:false};
+   if(it.fem){if(!e.f)e.f=it.text}else if(!e.m)e.m=it.text;if(!e.req)e.req=it.req;M.set(key,e);nf++}}catch(e){say('ما قدرتش أقرا «'+f.name+'»',1)}}
+ if(!M.size){say('ما لقيتش دفوع شكلية في الملفات دي (بدوّر على «الدفاع» وبنود «أولاً: …»).',1);return}
+ const rows=[...M.values()];rows.forEach(e=>{if(e.m&&!e.f){e.f=txtApply(e.m,'F');e.der=true}});
+ rows.forEach(e=>{const ex=dfs.find(d=>GN_NORM(d.title)===GN_NORM(e.title));e.ex=ex||null;e.on=!(ex&&ex.lock&&ex.m&&ex.f)});
+ const ov=modal('<h3>الدفوع اللي لقيتها ('+rows.length+')</h3><small>راجع العنوان وسطر الطلب، وشيل العلامة عن اللي مش عايزه. نص المدعية المولّد تلقائياً مش بيتقفل.</small><div id="dil" style="margin-top:8px"></div><div class="r" style="margin-top:12px"><button class="go" id="dis" style="margin:0;flex:1">✓ إضافة للمكتبة</button><button class="s" id="dic">إلغاء</button></div>');
+ const L=ov.querySelector('#dil');
+ rows.forEach(e=>{const d=document.createElement('div');d.className='it';
+  d.innerHTML='<label class="ck"><input type="checkbox" '+(e.on?'checked':'')+'><b>'+(e.ex?(e.ex.lock?'🔁 هيستبدل المقفول: ':'🔄 هيتحدّث: '):'➕ جديد: ')+'</b></label><input class="t" style="width:100%;margin-top:6px;box-sizing:border-box" placeholder="العنوان"><input class="q" style="width:100%;margin-top:6px;box-sizing:border-box" placeholder="سطر الطلب"><small style="display:block;margin-top:4px">'+(e.m?'نص المدع ✓':'نص المدع —')+' · '+(e.f?(e.der?'نص المدعية ✨ مولّد':'نص المدعية ✓'):'نص المدعية —')+'</small><small style="display:block;opacity:.7">'+esc((e.m||e.f).slice(0,150))+'</small>';
+  d.querySelector('.t').value=e.title;d.querySelector('.q').value=e.req;d.querySelector('input[type=checkbox]').onchange=ev=>{e.on=ev.target.checked};
+  d.querySelector('.t').oninput=ev=>{e.title=ev.target.value};d.querySelector('.q').oninput=ev=>{e.req=ev.target.value};L.append(d)});
+ ov.querySelector('#dic').onclick=()=>ov.remove();
+ ov.querySelector('#dis').onclick=()=>{let n=0;rows.filter(e=>e.on&&e.title.trim()).forEach((e,i)=>{
+   const ex=dfs.find(d=>GN_NORM(d.title)===GN_NORM(e.title));const d=ex||{id:'d'+Date.now()+i,title:e.title.trim(),m:'',f:'',req:'',lock:false};
+   if(e.req.trim())d.req=e.req.trim();if(e.m)d.m=e.m;if(e.f&&(!ex||e.m||!d.f))d.f=e.f;
+   d.lock=!!(d.title&&d.req&&d.m&&d.f&&!e.der);if(!ex)dfs.push(d);n++});
+  svD();ov.remove();rd();rl();say('اتضاف/اتحدّث '+n+' دفع في المكتبة ✓ راجع نصوصهم في «مكتبة الدفوع».')}};
+/* ===== «تطبيق» رد الاعتبار / وقف التنفيذ / سقوط العقوبة ===== */
+const appKey=()=>{if(cur===mtId.wq)return 'wq';if(cur===mtId.sq)return 'sq';if(cur===mtId.rdj||cur===mtId.rdh)return 'rd';
+ const n=GN_NORM((types.find(t=>t.id===cur)||{}).name||'');if(/موضوع/.test(n))return '';
+ if(/رد (ال)?اعتبار/.test(n))return 'rd';if(/وقف (ال)?تنفيذ/.test(n))return 'wq';if(/سقوط/.test(n))return 'sq';return ''};
+const isApp=()=>!!appKey();
+const appLabel=()=>({wq:'تطبيق وقف التنفيذ',sq:'تطبيق سقوط العقوبة',rd:'تطبيق رد الاعتبار'})[appKey()]||'التطبيق';
+const lgA=(i,k)=>gv(lkk(i,k))||'';
+let appSkip=false;
+function appUI(){const on=isApp();$('apd').hidden=!on;if(!on)return;const has=!!$('ap').value.trim();$('aps').textContent=(has?'✓ ':'⚠ ')+appLabel()+(has?' (متحط)':' — الصقه هنا من جوجل لينس')}
+const _sync0=syncUI;syncUI=function(){_sync0();appUI();stepUpd()};
+pasteClean($('ap'));$('ap').addEventListener('input',appUI);
+$('cl3').onclick=()=>{learn($('ap'));$('ap').value=lensText($('ap').value);$('ap')._snap=$('ap').value;saveDraft();appUI()};
+async function askApp(mode){const k=$('kd').value;let paras=[];
+ try{const r=bytes(k);if(r.b)paras=(await docParas(await filesOf(r,k))).filter(x=>x.length>=3)}catch(e){}
+ return new Promise(res=>{
+  const ov=modal('<h3>'+esc(appLabel())+'</h3><div class="me" style="margin-bottom:8px">⚠ المذكرة دي محتاجة «'+esc(appLabel())+'». الصقه من جوجل لينس وحدّد بدايته ونهايته في المذكرة.</div><textarea id="mxT" rows="5" placeholder="الصق «'+esc(appLabel())+'» من جوجل لينس هنا"></textarea>'
+   +'<label style="display:block;font-weight:600;margin-top:8px">بداية التطبيق في المذكرة (آخر كلام قبله)</label><input id="mx0" style="width:100%;box-sizing:border-box"><label style="display:block;font-weight:600;margin-top:8px">نهاية التطبيق في المذكرة (أول كلام بعده)</label><input id="mx1" style="width:100%;box-sizing:border-box">'
+   +'<small style="display:block;margin:8px 0 4px">أو دوس على فقرة من المذكرة وتتحط في الخانة اللي واقف عليها:</small><div id="mxL" style="max-height:150px;overflow:auto;border:1px solid var(--b);border-radius:10px"></div>'
+   +'<div class="r" style="margin-top:12px"><button class="go" id="mxY" style="margin:0;flex:1">✓ '+(mode==='gen'?'حفظ وتوليد':'حفظ')+'</button>'+(mode==='gen'?'<button class="s" id="mxS">من غير تطبيق</button>':'')+'<button class="s" id="mxN">إلغاء</button></div>');
+  const T=ov.querySelector('#mxT'),a0=ov.querySelector('#mx0'),a1=ov.querySelector('#mx1');T.value=$('ap').value;a0.value=lgA(2,k);a1.value=lgA(3,k);pasteClean(T);let act=a0;a0.onfocus=()=>act=a0;a1.onfocus=()=>act=a1;
+  const box=ov.querySelector('#mxL');paras.slice(0,150).forEach(t=>{const d=document.createElement('div');d.style.cssText='padding:7px 10px;border-bottom:1px solid var(--b);cursor:pointer;font-size:13px';d.textContent=t.length>80?t.slice(0,80)+'…':t;
+   d.onclick=()=>{if(act===a0){a0.value=t.replace(/[\s:：]+$/,'');a1.focus();a1.select()}else a1.value=t.split(/\s+/).slice(0,6).join(' ')};box.append(d)});
+  const done=v=>{ov.remove();res(v)};
+  ov.querySelector('#mxY').onclick=()=>{const tx=T.value.trim(),x=a0.value.trim(),y=a1.value.trim();if(tx&&(!x||!y)){toast('حدّد بداية ونهاية التطبيق.');return}
+   $('ap').value=tx;if(x)sv(lkk(2,k),x);if(y)sv(lkk(3,k),y);saveDraft();appUI();done(tx?'ok':'skip')};
+  const sk=ov.querySelector('#mxS');if(sk)sk.onclick=()=>done('skip');ov.querySelector('#mxN').onclick=()=>done('cancel');
+  ov.addEventListener('keydown',e=>{if(e.key==='Escape')done('cancel')});setTimeout(()=>T.focus(),50)})}
+$('apa').onclick=()=>askApp('edit');
+/* ===== خطوات: كل خانة مقفولة ومخفية لحد ما اللي قبلها تتملي ===== */
+const STP=[['stp2','الأطراف'],['stp3','الدعوى والجلسة'],['stp4','الطلبات الختامية'],['stp5','الدفوع الشكلية']];
+let stOpen=new Set(),stepOK=false;
+function stepUpd(){
+ try{const k=$('kd').value;stepOK=!!(gv(tk(k))||(cur===TY0&&k==='m')||(gv('autoder')!=='0'&&planFor(k)))}catch(e){stepOK=false}
+ const pr=[()=>stepOK,()=>$('pn').value.trim()&&$('dn').value.trim(),()=>$('no').value.trim()&&$('yr').value.trim(),()=>$('fx').value.trim()];
+ STP.forEach(([id],i)=>{if((i===0||stOpen.has(STP[i-1][0]))&&pr[i]())stOpen.add(id)});
+ STP.forEach(([id])=>{$(id).style.display=stOpen.has(id)?'':'none'});
+ $('gb').style.display=stOpen.has('stp4')?'':'none';
+ const nx=STP.find(([id])=>!stOpen.has(id));$('sth').style.display=nx?'':'none';
+ if(nx)$('sht').textContent=(!stepOK?'🔒 «الأطراف» هتفتح بعد ما تختار مذكرة جاهزة (ارفعها لو مش مرفوعة).':'🔒 الخطوة الجاية: «'+nx[1]+'» — بتفتح لما تخلّص اللي فوق.')}
+function stepReset(){stOpen.clear();stepUpd()}
+$('sks').onclick=()=>{const nx=STP.find(([id])=>!stOpen.has(id));if(nx){stOpen.add(nx[0]);stepUpd()}};
+document.addEventListener('input',()=>stepUpd());document.addEventListener('change',()=>stepUpd());
+
+function dv0(tid,k){const p=cur;cur=tid;try{return gv('autoder')!=='0'&&!!planFor(k)}finally{cur=p}}
 const arOpen=new Set();
 function ra(){const L=$('al');if(!L)return;const q=($('aq').value||'').trim();L.innerHTML='';
  const list=arch.filter(a=>!q||[a.c.plName,a.c.no,a.c.yr,a.c.dfName,a.tn].join(' ').includes(q));
@@ -811,8 +1283,8 @@ rbt();ra();
 // opinion tab: search the archive and add a generated defense memo without uploading it
 async function regen(a){const prev=cur;try{if(types.some(t=>t.id===a.ty))cur=a.ty;
  const c=a.c,r=bytes(c.kind);if(!r.b)throw Error(r.n);
- const o={...c,s0:lg(0,c.kind),s1:lg(1,c.kind)},L=levelsFor(c.kind,a.lv||[]);if(L)o.levels=L;
- return writeZip(arFiles(buildMemo(await readZip(r.b.buffer),o)))}finally{cur=prev}}
+ const o={...c,s0:lg(0,c.kind),s1:lg(1,c.kind),noStay:gv('nostay')==='1',fmt:gv('fmt')!=='0',a0:lgA(2,c.kind),a1:lgA(3,c.kind)},L=levelsFor(c.kind,a.lv||[]);if(L)o.levels=L;
+ {const fl=buildMemo(await filesOf(r,c.kind),o);if(o.warns&&o.warns.length)toast('⚠ '+o.warns.join(' | '));return writeZip(arFiles(fl))}}finally{cur=prev}}
 function rorl(){const L=$('orl');L.innerHTML='';const q=toEn($('oq').value).trim();if(!q)return;
  const list=arch.filter(a=>toEn([a.c.no,a.c.yr,a.c.plName,a.c.dfName].join(' ')).includes(q)).slice(0,10);
  if(!list.length){L.innerHTML='<small>مفيش مذكرة متولّدة بالرقم ده.</small>';return}
@@ -839,8 +1311,9 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
  else{hk.push(k);sv('hkinds',JSON.stringify(hk))}
  rkd();tpl();chk();rbt();saveDraft()};
 $('kres').onclick=()=>{if(!hk.length){toast('مفيش أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
-pin?selectMemo(pin.t,pin.k):selectMemo(cur,$('kd').value);
-const APP_VER='1.1.4',APP_DATE='2026-11-02';
+{const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
+ const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
+const APP_VER='1.9.0',APP_DATE='2026-11-02';
 (()=>{const z0=parseFloat(gv('uiz'));if(z0>0)document.body.style.zoom=z0;
  const stp=d=>{const c=parseFloat(getComputedStyle(document.body).zoom)||1,n=Math.min(3,Math.max(.7,Math.round((c+d)*20)/20));document.body.style.zoom=n;sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();
@@ -854,15 +1327,9 @@ function addDays(n){const D=[$('d').value,$('m').value,$('y').value].map(toEn);l
  dt.setDate(dt.getDate()+n);
  [['d',dt.getDate()],['m',dt.getMonth()+1],['y',dt.getFullYear()]].forEach(([k,v])=>{$(k).value=toAr(v);$(k).dispatchEvent(new Event('input',{bubbles:true}))});
  $('d').dispatchEvent(new Event('change',{bubbles:true}))}
-$('dp7').onclick=()=>addDays(7);rlc();$('rvall').checked=gv('rvall')==='1';$('rvall').onchange=()=>sv('rvall',$('rvall').checked?'1':'0');
+$('dp7').onclick=()=>addDays(7);cxUpd();rlc();$('rvall').checked=gv('rvall')==='1';$('rvall').onchange=()=>sv('rvall',$('rvall').checked?'1':'0');
 try{const o=JSON.parse(gv('sd')||'null');if(o&&typeof o==='object')['d','m','y'].forEach(k=>{if(o[k]!=null)$(k).value=o[k]})}catch(e){}
 const svSd=()=>sv('sd',JSON.stringify({d:$('d').value,m:$('m').value,y:$('y').value}));
 document.addEventListener('input',svSd);document.addEventListener('change',svSd);
 convAll();
-</script><script>
-if('serviceWorker' in navigator&&/^https?:/.test(location.protocol)){
- const had=!!navigator.serviceWorker.controller;
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&typeof toast==='function')toast('اتحدّث البرنامج ✓ — اقفله وافتحه تاني')});
- navigator.serviceWorker.register('sw.js').catch(()=>{});
- if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}
 </script></body></html>

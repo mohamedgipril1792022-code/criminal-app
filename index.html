@@ -466,13 +466,15 @@ function buildMemo(files,o){
   if(/<w:pageBreakBefore/.test(q))return q;
   if(/<w:pPr>/.test(q)){const m=q.match(/<w:pPr>(<w:pStyle [^>]*\/>)?(<w:keepNext ?\/>)?(<w:keepLines ?\/>)?/);const k=m[0].length;return q.replace(/<w:pPr>[\s\S]*$/,t=>t.slice(0,k)+'<w:pageBreakBefore/>'+t.slice(k))}
   return q.replace(/^(<w:p(?: [^>]*)?>)/,'$1<w:pPr><w:pageBreakBefore/></w:pPr>')})}
- let rlDone=false;
- xml=xml.replace(PRE,q=>{if(rlDone||!/رول\s*\(/.test(ptext(q)))return q;rlDone=true;
-  if(!/تسجيل\s*رول/.test(ptext(q)))q=swapInPara(q,/(?<![ء-ي])رول(?=\s*\()/,'موضوعي تسجيل رول');
-  if(!(o.rl||'').trim())return q;return swapInPara(q,/(?<=رول\s*\()[\s\u00A0]*(?=\))/,' '+toAr(o.rl.trim())+' ')});
- if((o.rl||'').trim()&&!rlDone){const b0=xml.indexOf('<w:body>'),f0=b0<0?-1:xml.slice(b0).search(/<w:p[ >]/);
+ let rlDone=false;const RLW=/(?<![ء-ي])رول(?![ء-ي])/,rn=(o.rl||'').trim()?toAr(o.rl.trim()):'';
+ xml=xml.replace(PRE,q=>{const t=ptext(q);if(!RLW.test(t))return q;rlDone=true;
+  if(!/تسجيل\s*رول/.test(t))q=swapInPara(q,/(?<![ء-ي])رول(?![ء-ي])/,'موضوعي تسجيل رول');
+  if(!rn)return q;
+  if(/رول\s*\(/.test(ptext(q)))return swapInPara(q,/(?<=رول\s*\()[^)]*(?=\))/,' '+rn+' ');
+  return swapInPara(q,/(?<![ء-ي])رول(?:\s*[0-9٠-٩]+)?(?![ء-ي])/,'رول '+rn)});
+ if(rn&&!rlDone){const b0=xml.indexOf('<w:body>'),f0=b0<0?-1:xml.slice(b0).search(/<w:p[ >]/);
   if(f0>=0){const F='<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:b/><w:bCs/><w:sz w:val="28"/><w:szCs w:val="28"/><w:rtl/>';
-   const rp=toAr(o.rl.trim()),np='<w:p><w:pPr><w:bidi/><w:spacing w:before="0" w:after="60"/><w:jc w:val="left"/><w:rPr>'+F+'</w:rPr></w:pPr><w:r><w:rPr>'+F+'</w:rPr><w:t xml:space="preserve">'+esc('موضوعي تسجيل رول '+rp)+'</w:t></w:r></w:p>';
+   const np='<w:p><w:pPr><w:bidi/><w:spacing w:before="0" w:after="60"/><w:jc w:val="center"/><w:rPr>'+F+'</w:rPr></w:pPr><w:r><w:rPr>'+F+'</w:rPr><w:t xml:space="preserve">'+esc('موضوعي تسجيل رول '+rn)+'</w:t></w:r></w:p>';
    xml=xml.slice(0,b0+f0)+np+xml.slice(b0+f0)}}
  return files.map(x=>x===doc?{name:x.name,data:enc.encode(xml)}:x);
 }
@@ -549,7 +551,7 @@ function syncUI(){setTimeout(tfUpd,0);
  const box=$('mt');box.innerHTML='';box.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-top:6px';
  const ML=mtList();ML.forEach(([key,label],ix)=>{const tid=mtId[key],kk=isF(k)?'f':'m',own=!!gv(tkF(tid,kk))||(tid===TY0&&kk==='m'),der=!own&&dv0(tid,kk);
   const b=document.createElement('button');b.className='chp'+(cur===tid?' on':'');
-  b.textContent=(isPin(tid,kk)?'⭐ ':'')+(own?'✓ ':der?'✨ ':'')+label;b.onclick=()=>selectMemo(tid,isF($('kd').value)?'f':'m');
+  b.textContent=(isPin(tid,kk)?'⭐ ':'')+(!own&&der?'✨ ':'')+label;b.onclick=()=>selectMemo(tid,isF($('kd').value)?'f':'m');
   if(!mtEdit){b.style.flex='1 1 30%';box.append(b);return}
   const r=document.createElement('div');r.className='mr';r.style.flex='1 1 100%';
   const up=document.createElement('button'),dn=document.createElement('button');up.className=dn.className='s';up.style.padding=dn.style.padding='6px 12px';

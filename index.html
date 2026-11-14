@@ -96,8 +96,7 @@ body.sbx:not(.sbp) #sb:hover{width:196px;padding:16px 10px;box-shadow:-6px 0 18p
 <small id="rInfo" style="display:block;font-weight:600"></small><div id="rList" style="max-height:320px;overflow:auto;margin-top:6px"></div></details>
 
 <div class="c" id="stp2" style="display:none"><h2>الأطراف</h2>
-<small style="display:block;margin:0 0 4px">نوع المدعي (بيتحدد تلقائي من الاسم — وتقدر تغيّره بإيدك):</small><div class="gtb" style="margin-bottom:8px"><button id="gm" data-g="m">👨 مدع</button><button id="gf" data-g="f">👩 مدعية</button></div>
-<div class="r"><input id="pn" placeholder="الاسم">
+<div class="r" style="flex-wrap:nowrap"><input id="pn" placeholder="الاسم" style="flex:1;min-width:0"><div class="gtb" style="margin:0;flex:none;gap:6px" title="نوع المدعي: بيتحدد تلقائي من الاسم، وتقدر تغيّره بإيدك"><button id="gm" data-g="m" style="padding:10px 12px;white-space:nowrap">👨 مدع</button><button id="gf" data-g="f" style="padding:10px 12px;white-space:nowrap">👩 مدعية</button></div>
 <select id="kd" hidden><option value="m">مدع — قضية</option><option value="mN">مدع — قضايا</option><option value="f">مدعية — قضية</option><option value="fN">مدعية — قضايا</option><option value="d">مدعيان</option><option value="fp">مدعيات</option></select></div>
 <div class="r"><input id="dn" value="وزير الداخلية">
 <select id="dm"><option value="0">فقط</option><option value="1">وآخر</option><option value="2" selected>وآخرين</option></select></div>
@@ -353,7 +352,7 @@ function stdSent(kind,n,noStay,cs){const W=OPW[kind]||OPW.m,gen=n===1?'القض�
  return 'وهديا بما تقدم وإذ '+W[0]+' '+W[1]+(noStay?' ':' الحكم بوقف تنفيذ ثم ')+'إلغاء القرار السلبى بالامتناع عن شطب ومحو '+(cs||gen)+' مع ما يترتب على ذلك من آثار.'}
 const czJoin=t=>String(t||'').split(/\n+/).map(x=>x.trim().replace(/[،,;؛.\s]+$/,'')).filter(Boolean).join('، ');
 const factsCnt=t=>{t=String(t||'').replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632);const n=(t.match(/القضي[ةه]\s+رقم/g)||[]).length;if(n)return n;const m=(t.match(/(?:\d+\s*[-–.)]|\(\d+\))\s*[^\n]{0,40}?\d+\s*(?:\/|لسنة)\s*\d{2,4}/g)||[]).length;if(m>1)return m;if(/القضيتين|القضيتان/.test(t))return 2;if(/القضايا/.test(t))return 3;return 0};
-const nCases=(o,cz)=>cz?Math.max(caseCount(cz),(o.cases||'').split(/\n+/).filter(x=>x.trim()).length):(factsCnt(o.facts)||(sfx(o.kind||'m')==='N'?3:sfx(o.kind||'m')==='2'?2:1));
+const nCases=(o,cz)=>cz?Math.max(caseCount(cz),(o.cases||'').split(/\n+/).filter(x=>x.trim()).length):(factsCnt(o.facts)||factsCnt(o.app)||(sfx(o.kind||'m')==='N'?3:sfx(o.kind||'m')==='2'?2:1));
 function stdLines(lines,o,kind,cz){
  if(lines.some(l=>/توقيع\s+المحام/.test(NZ2(l))))return lines;
  const std=stdSent(kind,nCases(o,cz),o.noStay,'');
@@ -558,11 +557,13 @@ function buildMemo(files,o){
   if(/^وهدي/.test(t)&&/بغي[ةه] الحكم (?:له|لها) بوقف تنفيذ/.test(t)&&!o.noStayX){const W=OPW[kind]||OPW.m,n=nCases(o,cz),cw=n===1?'القضية':n===2?'القضيتين':'القضايا';
    q=swapInPara(q,/ولما كان(?:ت)?\s+(?:المدعى|المدعي|المدعية)\s+قد\s+[أا]قام(?:ت)?\s+دعوا(?:ه|ها)\s+الماثل[ةه]\s+بغي[ةه]\s+الحكم\s+(?:له|لها)\s+بوقف\s+تنفيذ\s+(?:و|ثم\s+)[إا]لغاء/,'وإذ '+W[0]+' '+W[1]+(o.noStay?' ':' الحكم بوقف تنفيذ ثم ')+'إلغاء');
    q=swapInPara(q,/شطب ومحو القضايا/,'شطب ومحو '+cw);
-   q=swapInPara(q,/وهم كالا[تث]ى/,n===1?'وهي كالآتي':n===2?'وهما كالآتي':'وهم كالآتي');return q}
+   q=swapInPara(q,/وه[مي]\s+كال[اآ]ت[يى]/,n===1?'وهي كالآتي':n===2?'وهما كالآتي':'وهم كالآتي');return q}
   return q});
  {const n=nCases(o,cz),cw=n===1?'القضية':n===2?'القضيتين':'القضايا',sfxA=n===2?'تين':'ة';
   xml=xml.replace(PRE,q=>{const t=NZ2(ptext(q));let r=q;
    const ad=(r0)=>{const m=ptext(r0).match(/(?:القضية|القضيتين|القضايا)\s+(المسجل|المبين|المذكور|المشار)(?:ة|ه|تين)?/);return m?swapInPara(r0,/(?:القضية|القضيتين|القضايا)\s+(?:المسجل|المبين|المذكور|المشار)(?:ة|ه|تين)?/,cw+' '+m[1]+sfxA):r0};
+   if(/^\s*وهدي/.test(t)&&/[إا]لغاء\s+القرار\s+السلب/.test(t)){const W=OPW[kind]||OPW.m;r=swapInPara(r,/^\s*وهدي[اً]?\s+بما\s+تقدم[\s\S]*?(?=[إا]لغاء\s+القرار\s+السلب)/,'وهديا بما تقدم وإذ '+W[0]+' '+W[1]+(o.noStay?' ':' الحكم بوقف تنفيذ ثم '))}
+   if(/(?:شطب|محو)\s+(?:و?محو\s+)?(?:القضية|القضيتين|القضايا)/.test(NZ2(ptext(r)))&&/وه[مي]\s+كالا/.test(NZ2(ptext(r))))r=swapInPara(r,/وه[مي]\s+كال[اآ]ت[يى]/,n===1?'وهي كالآتي':n===2?'وهما كالآتي':'وهم كالآتي');
    if(/(?:شطب|محو)\s+(?:و?محو\s+)?(?:القضية|القضيتين|القضايا)(?!\s*رقم)/.test(t)){r=swapInPara(r,/(?<=(?:شطب|محو)\s(?:و?محو\s)?)(?:القضية|القضيتين|القضايا)(?!\s*رقم)/,cw);r=ad(r)}
    else if(/[يتب]زعم|زعمه|زعمها/.test(t)&&/(?:القضية|القضيتين|القضايا)(?!\s*رقم)/.test(t)){r=swapInPara(r,/(?:القضيتين|القضايا|القضية)(?!\s*رقم)(?=\s+(?:المسجل|المبين|المذكور|المشار|محل|الواردة|المقيد))/,cw);r=ad(r)}
    return r})}
@@ -1221,7 +1222,7 @@ const fdClr=async()=>{FH=null;try{await idb('readwrite',s=>s.delete('dir'))}catc
 async function saveToFolder(b,n){if(!FH)return false;try{let pm=await FH.queryPermission({mode:'readwrite'});if(pm!=='granted')pm=await FH.requestPermission({mode:'readwrite'});if(pm!=='granted')return false;
  const fh=await FH.getFileHandle(n.replace(/[\\/:*?"<>|]/g,'-'),{create:true}),w=await fh.createWritable();await w.write(b);await w.close();toast('اتحفظت في «'+FH.name+'»: '+n);return true}catch(e){return false}}
 function dlBlob(b,n){(async()=>{if(await saveToFolder(b,n))return;const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)})()}
-function arc(c){arch.unshift({id:Date.now()+Math.random(),t:Date.now(),ty:cur,tn:tname(),c:{...c},lv:lv.map(x=>({on:x.on,id:x.id,sf:JSON.parse(JSON.stringify(x.sf||[]))}))});svA()}
+function arc(c){arch.unshift({id:Date.now()+Math.random(),t:Date.now(),ty:cur,tn:tname(),c:{...c},lv:lv.map(x=>({on:x.on,id:x.id,sf:JSON.parse(JSON.stringify(x.sf||[]))}))});svA();try{rollShow()}catch(e){}}
 // warnings
 function warnShared(c){const w=[];
  if(/وآخر/.test(c.dfName)&&c.dfMore)w.push('المدعى عليه «'+c.dfName+'» فيه «وآخر» وإنت كمان مختار «'+DMN[c.dfMore]+'» — هتتكرر.');
@@ -1708,8 +1709,8 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
 $('kres').onclick=()=>{if(!hk.length){toast('مفيش أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
 {const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
  const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
-const APP_VER='28',APP_DATE='2026-11-14',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const APP_NEW=['القائمة الجانبية: زر ☰ للفتح والقفل وزر 📌 للتثبيت','الرول بقى أول خانة فوق «اختر المذكرة»','زر واضح لاختيار مدع / مدعية (التلقائي شغال وتقدر تغيّره)','القضايا المراد محوها بتتفصل بفاصلة ، بين كل قضية والتانية','كلمة (قضية / قضيتين / قضايا) تتظبط تلقائي في جملة «بزعم» وفي التطبيق حسب القضايا في الطلبات أو المتلصقة','تبويبات جانبية بدل الشاشة المزدحمة (المذكرات · الرول · الرأي · المدمجة · الدفوع · الأدوات · النسخة الاحتياطية)','معاينة المذكرة كاملة قبل التنزيل: عدّل مباشرة، يتحفظ في المذكرة، والبرنامج يتعلّم منه','عنوان «مذكرة دفاع» وصيغة الختام الموحدة («وهديا بما تقدم…» بحسب عدد القضايا ونوع المدعي)','ترويسة مدعٍ/مدعى عليهم تتبع الأسماء','تصحيح إملائي ولغوي للمذكرة كاملة وإصلاح صيغة المؤنث','الأزرار بتستجيب من أي مكان فيها','اختيار مجلد على اللابتوب تتحفظ فيه المذكرات (Chrome / Edge)','رقم الرول بيتكتب في سطر «موضوعي تسجيل رول» اللي في نص الصفحة','تنسيق الدفوع: عناوين ١٦ وباقي ١٥ بخط واحد، وجمل «تنص المادة… على أن» بخط تحتها','شيل علامة ✓ من أنواع المذكرات الخمسة','استيراد الرول (موضوعي تسجيل) مع جدول بخاناته وفلتر الجلسة والنهايات','رقم الرول يتكتب في المذكرة جوه «موضوعي تسجيل رول ( )»','«الدفاع» تبدأ الصفحة التانية لو الواقعات قصيرة','حذف الجملة الزيادة في تطبيق الدفوع وعنوان نص القانون بخط تحته','تصحيح لغوي تلقائي ونص رد الاعتبار'];
+const APP_VER='29',APP_DATE='2026-11-14',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const APP_NEW=['نوع المدعي (مدع / مدعية) بقى جنب الاسم','الرول بيعلّم القضية «اتعملت» فوراً بعد التنزيل','عدد القضايا بيتحدد من الطلبات أو التطبيق أو القضايا الملصوقة، والتطبيق «وهديا بما تقدم» موحّد','القائمة الجانبية: زر ☰ للفتح والقفل وزر 📌 للتثبيت','الرول بقى أول خانة فوق «اختر المذكرة»','زر واضح لاختيار مدع / مدعية (التلقائي شغال وتقدر تغيّره)','القضايا المراد محوها بتتفصل بفاصلة ، بين كل قضية والتانية','كلمة (قضية / قضيتين / قضايا) تتظبط تلقائي في جملة «بزعم» وفي التطبيق حسب القضايا في الطلبات أو المتلصقة','تبويبات جانبية بدل الشاشة المزدحمة (المذكرات · الرول · الرأي · المدمجة · الدفوع · الأدوات · النسخة الاحتياطية)','معاينة المذكرة كاملة قبل التنزيل: عدّل مباشرة، يتحفظ في المذكرة، والبرنامج يتعلّم منه','عنوان «مذكرة دفاع» وصيغة الختام الموحدة («وهديا بما تقدم…» بحسب عدد القضايا ونوع المدعي)','ترويسة مدعٍ/مدعى عليهم تتبع الأسماء','تصحيح إملائي ولغوي للمذكرة كاملة وإصلاح صيغة المؤنث','الأزرار بتستجيب من أي مكان فيها','اختيار مجلد على اللابتوب تتحفظ فيه المذكرات (Chrome / Edge)','رقم الرول بيتكتب في سطر «موضوعي تسجيل رول» اللي في نص الصفحة','تنسيق الدفوع: عناوين ١٦ وباقي ١٥ بخط واحد، وجمل «تنص المادة… على أن» بخط تحتها','شيل علامة ✓ من أنواع المذكرات الخمسة','استيراد الرول (موضوعي تسجيل) مع جدول بخاناته وفلتر الجلسة والنهايات','رقم الرول يتكتب في المذكرة جوه «موضوعي تسجيل رول ( )»','«الدفاع» تبدأ الصفحة التانية لو الواقعات قصيرة','حذف الجملة الزيادة في تطبيق الدفوع وعنوان نص القانون بخط تحته','تصحيح لغوي تلقائي ونص رد الاعتبار'];
 (()=>{const R=document.documentElement,get=()=>parseFloat(R.style.getPropertyValue('--uz'))||1;const z0=parseFloat(gv('uiz'));if(z0>0)R.style.setProperty('--uz',z0);
  const stp=d=>{const n=Math.min(3,Math.max(.7,Math.round((get()+d)*20)/20));R.style.setProperty('--uz',n);sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();

@@ -356,6 +356,7 @@ label.chk{display:flex;gap:6px;align-items:center;font-size:.9rem}
     <label class="chk"><input type="checkbox" id="crp" checked> قصّ الصفحة على النص وضبط الحجم تلقائياً (أسرع)</label>
     <label class="chk"><input type="checkbox" id="tplOn" checked> تصحيح الفقرات المتكررة بتصحيحاتي السابقة</label>
     <label class="chk"><input type="checkbox" id="trm" checked> القراءة من «قبول الطعن شكلًا» إلى «وكيل المدعي» فقط</label>
+    <div class="row" style="gap:8px"><input id="trmS" placeholder="البداية (فارغ = تلقائي: قبول … شكلًا)" style="flex:1;min-width:150px"><input id="trmE" placeholder="النهاية (فارغ = تلقائي: وكيل المدعي)" style="flex:1;min-width:150px"></div>
     <label class="chk"><input type="checkbox" id="rep" checked> حذف الترويسة والتذييل المتكررين</label>
   </div>
   <div class="row">
@@ -374,6 +375,7 @@ label.chk{display:flex;gap:6px;align-items:center;font-size:.9rem}
   <div class="panel row" style="margin-top:0">
     <button class="pri" id="cpAll">نسخ الكل</button>
     <button id="toOp">⚖️ نقل إلى مذكرة الرأي</button>
+    <input id="jdt" inputmode="numeric" placeholder="تاريخ الحكم لكل الدفعة: 31/8/2026" style="flex:1;min-width:190px">
     <button id="txt">تنزيل TXT</button>
     <button id="doc">تنزيل Word</button>
   </div>
@@ -743,16 +745,20 @@ function vocabFix(text,words){
   return text.replace(/\S+/g,tok=>{const k=nk(tok);return done[k]?tok.replace(k,done[k]):tok});
 }
 function lowWords(words,text){const o=[];for(const w of(words||[])){const k=nk(w.text||'');if(k.length>=2&&(w.confidence||0)<70&&text.includes(k)&&!o.includes(k))o.push(k)}return o.slice(0,40)}
+const trN=t=>String(t||'').replace(/[\u064B-\u065F\u0640\u0670]/g,'').replace(/[أإآٱ]/g,'ا').replace(/\s+/g,' ').trim();
 function trimBody(txt){
-  const L=txt.split('\n');let s=L.findIndex(l=>/قبول.{0,14}شك|اولا.{0,6}قبول|أولا.{0,6}قبول/.test(l.replace(/[ًٌٍَُِّْ]/g,'')));
+  const cs=trN($('trmS').value),ce=trN($('trmE').value),L=txt.split('\n');let s=cs?L.findIndex(l=>trN(l).includes(cs)):L.findIndex(l=>/قبول.{0,14}شك|اولا.{0,6}قبول|أولا.{0,6}قبول/.test(l.replace(/[ًٌٍَُِّْ]/g,'')));
   if(s<0)return txt;
-  let e=L.findIndex((l,i)=>i>s&&/وكيل\s*ال|^\s*المحامي\s*$/.test(l));
+  let e=L.findIndex((l,i)=>i>s&&(ce?trN(l).includes(ce):/وكيل\s*ال|^\s*المحامي\s*$/.test(l)));
   return L.slice(s,e<0?L.length:e).join('\n');
 }
 function trimSafe(x){try{return trimBody(x)}catch(e){return x}}
 function packRes(r){const ft=vocabFix(r.data.text||'',r.data.words),t=(r._pg&&$('trm').checked)?trimSafe(ft):ft;return{text:t,ft:r._pg?ft:null,conf:Math.round(r.data.confidence||0),lw:lowWords(r.data.words,t),nums:r._nums||[]}}
 $('tplOn').onchange=()=>{render(true)};
 $('trm').onchange=()=>{let ch=false;for(const p in S.raw){const o=S.raw[p];if(o.ft){o.text=$('trm').checked?trimSafe(o.ft):o.ft;ch=true}}if(ch){render(true);save()}};
+['trmS','trmE'].forEach(k=>{try{const v=localStorage.getItem('lens:'+k);if(v)$(k).value=v}catch(e){}});
+$('trmS').onchange=$('trmE').onchange=()=>{try{localStorage.setItem('lens:trmS',$('trmS').value);localStorage.setItem('lens:trmE',$('trmE').value)}catch(e){}$('trm').onchange()};
+try{const v=localStorage.getItem('lens:jdt');if(v)$('jdt').value=v}catch(e){}
 function setChips(el,arr){
   const ch=el.querySelector('.chips'),ta=el.querySelector('textarea');if(!ch)return;el._lw=arr||[];
   const v=ta.value,list=el._lw.filter(w=>v.includes(w)).slice(0,24);ch.innerHTML='';ch.hidden=!list.length;if(!list.length)return;
@@ -873,7 +879,7 @@ async function copy(t){try{await navigator.clipboard.writeText(t)}catch(e){const
 function flash(b){const o=b.textContent;b.textContent='تم ✓';setTimeout(()=>b.textContent=o,1200)}
 function all(){return [...document.querySelectorAll('.res')].map(e=>({p:e.dataset.p,t:e.querySelector('textarea').value}))}
 $('cpAll').onclick=async()=>{await copy(all().map(a=>'— '+lbl(a)+' —\n'+a.t).join('\n\n'));flash($('cpAll'))};
-$('toOp').onclick=async()=>{const t=all().map(a=>a.t).join('\n\n');if(!t.trim()){alert('لا يوجد نص');return}try{const n=await window.parent.lensToOpinion(t);if(n)flash($('toOp'))}catch(e){alert('تعذّر النقل: '+e.message)}};
+$('toOp').onclick=async()=>{const t=all().map(a=>{const o=S.raw[a.p];return(o&&o.ft&&$('trm').checked)?o.ft:a.t}).join('\n\n');if(!t.trim()){alert('لا يوجد نص');return}try{try{localStorage.setItem('lens:jdt',$('jdt').value)}catch(e){}const n=await window.parent.lensToOpinion(t,$('jdt').value);if(n)flash($('toOp'))}catch(e){alert('تعذّر النقل: '+e.message)}};
 function dl(name,mime,data){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 $('txt').onclick=()=>dl('pdf-lens.txt','text/plain;charset=utf-8','\ufeff'+all().map(a=>'— '+lbl(a)+' —\n'+a.t).join('\n\n'));
 $('doc').onclick=()=>{
@@ -2276,7 +2282,9 @@ dixUi();
 // ===== النقل من لينس إلى مذكرات الرأي =====
 const lensNote=o=>{if(!o.lens)return'';const w=(o._w||[]);
  return '<small style="display:block;margin:6px 0;color:'+(o.nolink||w.length?'#c0392b':'var(--a)')+'">⚖️ نُقل من لينس — راجع المنطوق والقضايا والتصرف'+(o.nolink?'<br>⚠ لا توجد مذكرة دفاع بهذا الرقم: ارفعها (أو افهرسها) وسيُدمج الحكم معها تلقائياً':'')+(w.length?'<br>⚠ لم أجد: '+esc(w.join('، ')):'')+'</small>'};
-window.lensToOpinion=async text=>{const js=parseJudg(text);
+window.lensToOpinion=async(text,dstr)=>{const js=parseJudg(text);
+ const dm0=toEn(dstr||'').match(/(\d{1,4})\D+(\d{1,2})\D+(\d{1,4})/),od=dm0?(+dm0[1]>31?{d:+dm0[3],m:+dm0[2],y:+dm0[1]}:{d:+dm0[1],m:+dm0[2],y:+dm0[3]<100?2000+ +dm0[3]:+dm0[3]}):null;
+ if(od)js.forEach(j=>{j.d=od.d;j.m=od.m;j.y=od.y;j.warns=j.warns.filter(w=>w!=='تاريخ الجلسة')});
  if(!js.length){toast(String(text||'').trim().length<80?'⚠ لا يوجد نص مقروء — اقرأ الصفحات في لينس أولاً':'⚠ لم أجد رقم الدعوى في النص (المتوقع «الدعوى رقم … لسنة … ق») — افتح نص إحدى الصفحات وتحقق من قراءة الرقم');return 0}
  let lk=0;const nw=[];
  for(const j of js){const d=await findDef(j.no,j.yr),f=d?{...d.f}:{no:toAr(j.no),yr:toAr(j.yr),pl:'',df:'',facts:[],kind:'m',cs:''};
@@ -3168,8 +3176,8 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
 $('kres').onclick=()=>{if(!hk.length){toast('لا توجد أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
 {const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
  const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
-const APP_VER='70',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const APP_NEW=['تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
+const APP_VER='73',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const APP_NEW=['PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
 (()=>{const R=document.documentElement,get=()=>parseFloat(R.style.getPropertyValue('--uz'))||1;const z0=parseFloat(gv('uiz'));if(z0>0)R.style.setProperty('--uz',z0);
  const stp=d=>{const n=Math.min(3,Math.max(.7,Math.round((get()+d)*20)/20));R.style.setProperty('--uz',n);sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();

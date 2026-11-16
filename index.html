@@ -364,6 +364,7 @@ label.chk{display:flex;gap:6px;align-items:center;font-size:.9rem}
     <label class="chk"><input type="checkbox" id="ds" checked> تقويم الميل</label>
     <label class="chk"><input type="checkbox" id="auto" checked> إعادة تلقائية للصفحات الضعيفة</label>
     <label class="chk">مراجعة السطور الضعيفة <select id="so"><option value="off">بدون (الأسرع — الافتراضي)</option><option value="auto">خفيفة (٤ سطور)</option><option value="full">كاملة (أدق وأبطأ)</option></select></label>
+    <label class="chk"><input type="checkbox" id="win" checked> قارئ ويندوز المحلي <span id="winst" class="hint"></span></label>
     <label class="chk">النموذج <select id="mdl"><option value="ara">عربي (الافتراضي)</option><option value="ara+eng">عربي + إنجليزي</option><option value="fast">عربي سريع</option></select></label>
   </div>
   <div class="row"><span id="cnt" class="hint"></span></div>
@@ -797,8 +798,8 @@ async function runRead(pages,fresh){
   if(fresh){S.raw={};$('pages').innerHTML=''}$('out').hidden=false;
   const W=+$('qual').value;let done=0;
   try{
-    await getWorker();
-    const q=pages.slice(),N=Math.max(1,S.pool.length);let act=0;
+    const wn=await useWin();if(!wn)await getWorker();
+    const q=pages.slice(),N=wn?1:Math.max(1,S.pool?S.pool.length:1);let act=0;
     const lane=async()=>{
       while(q.length&&!S.stop){
         const p=q.shift();act++;
@@ -824,6 +825,9 @@ $('go').onclick=()=>runRead([...S.sel].sort((a,b)=>a-b),true);
 $('stop').onclick=()=>{S.stop=true;S.again=false};
 /* قراءة تلقائية بمجرد تحديد الصفحات (الافتراضي شغال) */
 try{if(localStorage.getItem('lens:autoRd')==='0')$('autoRd').checked=false}catch(e){}
+try{if(localStorage.getItem('lens:win')==='0')$('win').checked=false}catch(e){}
+$('win').onchange=()=>{try{localStorage.setItem('lens:win',$('win').checked?'1':'0')}catch(e){}if($('win').checked)winPing(true);else $('winst').textContent=''};
+setTimeout(()=>winPing(true),400);
 $('autoRd').onchange=()=>{try{localStorage.setItem('lens:autoRd',$('autoRd').checked?'1':'0')}catch(e){}if($('autoRd').checked)autoSched()};
 function autoRead(){
   if(!$('autoRd').checked||!S.doc)return;
@@ -892,7 +896,29 @@ $('doc').onclick=()=>{
 /* ===== قراءة مسلسلة + ذاكرة التصحيحات + مناطق ===== */
 S.rc={};S.sc=0;S.regs=[];S.saved=null;
 let OQ=Promise.resolve(),RQ=Promise.resolve();
-function ocr(c,psm){return withW(async w=>{await w.setParameters({tessedit_pageseg_mode:psm});return w.recognize(c)})}
+/* ===== قارئ ويندوز المحلي (سكربت على اللابتوب، لا يخرج شيء من الجهاز) ===== */
+const WO={url:'http://127.0.0.1:8765',ok:false,t:0};
+async function winPing(force){
+  if(!force&&Date.now()-WO.t<(WO.ok?60000:8000))return WO.ok;
+  try{const r=await fetch(WO.url+'/ping',{cache:'no-store',signal:AbortSignal.timeout(1500)});const j=await r.json();WO.ok=!!(j&&j.ok)}catch(e){WO.ok=false}
+  WO.t=Date.now();const st=$('winst');if(st)st.textContent=WO.ok?'— متصل ✓':'— غير متصل (يُستعمل القارئ العادي)';return WO.ok}
+async function useWin(){const c=$('win');return !!(c&&c.checked&&await winPing())}
+async function winOcr(c){
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const res=await fetch(WO.url+'/ocr',{method:'POST',body:blob,headers:{'Content-Type':'application/octet-stream'}});
+  const j=await res.json();if(!res.ok||j.error)throw new Error(j.error||('HTTP '+res.status));
+  const words=[],lines=[],CF=88;
+  for(const L of(j.lines||[])){
+    const ws=(Array.isArray(L.words)?L.words:L.words?[L.words]:[]).map(w=>({text:w.t,confidence:CF,bbox:{x0:Math.round(w.x),y0:Math.round(w.y),x1:Math.round(w.x+w.w),y1:Math.round(w.y+w.h)}}));
+    if(!ws.length)continue;
+    const raw=ws.map(w=>w.text).join(''),ar=(raw.match(/[\u0600-\u06FF]/g)||[]).length>=raw.length*.3;
+    ws.sort((a,b)=>ar?b.bbox.x1-a.bbox.x1:a.bbox.x0-b.bbox.x0);
+    const bb={x0:Math.min(...ws.map(w=>w.bbox.x0)),y0:Math.min(...ws.map(w=>w.bbox.y0)),x1:Math.max(...ws.map(w=>w.bbox.x1)),y1:Math.max(...ws.map(w=>w.bbox.y1))};
+    lines.push({text:ws.map(w=>w.text).join(' '),confidence:CF,bbox:bb,words:ws});words.push(...ws)}
+  return{data:{text:lines.map(l=>l.text).join('\n'),words,lines,confidence:lines.length?CF:0}}}
+async function ocr(c,psm){
+  if(await useWin()){try{return await winOcr(c)}catch(e){WO.ok=false;WO.t=Date.now();const st=$('winst');if(st)st.textContent='— انقطع الاتصال، عاد القارئ العادي'}}
+  return withW(async w=>{await w.setParameters({tessedit_pageseg_mode:psm});return w.recognize(c)})}
 const lbl=a=>/^\d/.test(a.p)?'صفحة '+a.p:a.p;
 const nk=w=>w.replace(/^[^\u0621-\u064A0-9A-Za-z]+|[^\u0621-\u064A0-9A-Za-z]+$/g,'');
 function fxLoad(){try{return JSON.parse(localStorage.getItem('lens:fix')||'{}')}catch(e){return{}}}
@@ -1156,7 +1182,7 @@ async function gotImg(m){
   if(S.saved&&!app&&!confirm('يوجد ملف محفوظ «'+S.saved+'». هل تريد استبداله بالصور الواردة من الهاتف؟'))return 'اللابتوب رفض الاستبدال';
   if(!app){S.phone=[];}
   try{
-    if(typeof Tesseract!=='undefined'&&!m.res){
+    if((typeof Tesseract!=='undefined'||WO.ok)&&!m.res){
       const bm=await createImageBitmap(new Blob([m.buf],{type:'image/jpeg'})),c0=document.createElement('canvas');c0.width=bm.width;c0.height=bm.height;c0.getContext('2d').drawImage(bm,0,0);
       const fo=await fixOrient(c0,true);
       if(fo.deg){const bl=await new Promise(r=>fo.c.toBlob(r,'image/jpeg',.9));m={...m,w:fo.c.width,h:fo.c.height,buf:await bl.arrayBuffer()}}
@@ -3177,8 +3203,8 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
 $('kres').onclick=()=>{if(!hk.length){toast('لا توجد أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
 {const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
  const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
-const APP_VER='74',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const APP_NEW=['قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
+const APP_VER='75',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const APP_NEW=['PDF Lens: دعم «قارئ ويندوز المحلي» على اللابتوب — سكربت صغير يقرأ الصفحات بمحرك OCR العربي المدمج في ويندوز دون رفع شيء إلى الإنترنت، ويعود لينس إلى القارئ العادي تلقائياً إن لم يكن السكربت شغّالاً','قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
 (()=>{const R=document.documentElement,get=()=>parseFloat(R.style.getPropertyValue('--uz'))||1;const z0=parseFloat(gv('uiz'));if(z0>0)R.style.setProperty('--uz',z0);
  const stp=d=>{const n=Math.min(3,Math.max(.7,Math.round((get()+d)*20)/20));R.style.setProperty('--uz',n);sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();

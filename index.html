@@ -2020,7 +2020,7 @@ function ksUpd(){const k=$('kd').value,own=gv(tk(k)),bi=k==='m'&&cur===TY0;
  $('kb').textContent=own||bi?'🔓 تغيير المذكرة':'📎 رفع المذكرة الأصلية'}
 $('kb').onclick=()=>{const k=$('kd').value;if((gv(tk(k))||(k==='m'&&cur===TY0))&&!confirm('استبدال مذكرة «'+KN[k]+'» لنوع «'+tname()+'»؟'))return;$('kf').click()};
 $('kf').onchange=async()=>{let f=$('kf').files[0];const k=$('kd').value;$('kf').value='';if(!f)return;
- if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG,1);toast('تعذّر تحويل ملف doc — حوّله إلى docx أولاً.');return}}
+ if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);toast('تعذّر تحويل ملف doc — حوّله إلى docx أولاً.');return}}
  try{const buf=await f.arrayBuffer();await tryUpload(buf,cur,k,KN[k]+' — '+tname());
   sv(tk(k),bytesToB64(new Uint8Array(buf)));unl.delete(tk(k));loadLoc();tpl();chk();toast('حُفظت مذكرة «'+KN[k]+'» ✓')}
  catch(e){say(e.message==='اتلغى'?'أُلغي رفع المذكرة.':'الملف غير مطابق لشكل المذكرة: '+e.message,1)}};
@@ -2073,7 +2073,7 @@ function tpl(){const box=$('tp');box.innerHTML='';
   r.innerHTML='<b>'+esc(label)+'</b><small>'+(own?(unl.has(T)?'✎ مفتوحة للتعديل':'🔒 محفوظة ومقفولة'):(bi?'الأصلية المدمجة':'لم تُرفع بعد'))+(fx?' · + مدعية خاصة':'')+'</small>';
   const up=document.createElement('button');up.className='s';up.textContent=own||bi?'تغيير':'📎 رفع';
   const fi=document.createElement('input');fi.type='file';fi.accept='.docx,.doc';fi.hidden=true;up.onclick=()=>fi.click();
-  fi.onchange=async()=>{let f=fi.files[0];if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG,1);fi.value='';return}}
+  fi.onchange=async()=>{let f=fi.files[0];if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);fi.value='';return}}
    try{const buf=await f.arrayBuffer();await tryUpload(buf,tid,k,'مدع — '+label);sv(T,bytesToB64(new Uint8Array(buf)));unl.delete(T);say('تم حفظ مذكرة «'+label+'» ✓')}
    catch(err){say(err.message==='اتلغى'?'أُلغي رفع المذكرة.':'الملف غير مطابق لشكل المذكرة: '+err.message,1)}loadLoc();tpl();chk();syncUI()};
   r.append(up,fi);
@@ -2084,7 +2084,7 @@ function tpl(){const box=$('tp');box.innerHTML='';
    r2.innerHTML='<b style="font-weight:500">↳ مدعية</b><small>'+(fo?'🔒 محفوظة':'لم تُرفع — تُولَّد تلقائياً من مذكرة المدع')+'</small>';
    const fb=document.createElement('button');fb.className='s';fb.textContent=fo?'تغيير':'📎 رفع مدعية';
    const ff=document.createElement('input');ff.type='file';ff.accept='.docx,.doc';ff.hidden=true;fb.onclick=()=>ff.click();
-   ff.onchange=async()=>{let f=ff.files[0];if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG,1);ff.value='';return}}
+   ff.onchange=async()=>{let f=ff.files[0];if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);ff.value='';return}}
     try{const buf=await f.arrayBuffer();await tryUpload(buf,tid,'f','مدعية — '+label);sv(TF,bytesToB64(new Uint8Array(buf)));say('تم حفظ مذكرة المدعية «'+label+'» ✓');toast('حُفظت مذكرة المدعية ✓')}
     catch(err){say(err.message==='اتلغى'?'أُلغي رفع المذكرة.':'الملف غير مطابق لشكل المذكرة: '+err.message,1)}loadLoc();tpl();chk();syncUI()};
    r2.append(fb,ff);
@@ -2248,7 +2248,7 @@ function opTplUi(){const box=$('otp');box.innerHTML='';
   r.innerHTML='<b'+(g==='f'?' style="font-weight:500"':'')+'>'+(g==='f'?'↳ مدعية':esc(label))+'</b><small>'+(own?'🔒 محفوظة':(g==='f'?'تُولَّد تلقائياً من نموذج المدعي':'الأصلية المدمجة'))+'</small>';
   const b=document.createElement('button');b.className='s';b.textContent=own?'تغيير':(g==='f'?'📎 رفع مدعية':'تغيير');
   const fi=document.createElement('input');fi.type='file';fi.accept='.docx,.doc';fi.hidden=true;b.onclick=()=>fi.click();
-  fi.onchange=async()=>{let f=fi.files[0];fi.value='';if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say2(OLDMSG,1);return}}
+  fi.onchange=async()=>{let f=fi.files[0];fi.value='';if(!f)return;if(oldDoc(f.name)){f=await fixOld(f);if(!f){say2(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);return}}
    try{const buf=await f.arrayBuffer();await opCheck(buf);sv(K,bytesToB64(new Uint8Array(buf)));say2('تم حفظ نموذج «'+label+(g==='f'?' — مدعية':'')+'» ✓')}
    catch(e){say2('الملف غير مطابق لشكل المذكرة: '+e.message,1)}opTplUi();ro()};
   r.append(b,fi);
@@ -2365,7 +2365,7 @@ async function relinkOps(){let n=0;for(const o of ops){if(!o.nolink)continue;con
 $('dixb').onclick=()=>$('dixf').click();$('dix1').onclick=()=>$('dixf1').click();
 async function dixAdd(fl){let ok=0;const bad=[];const G=($('dixg').value||'').trim()||GDEF();$('dixg').value=G;
  for(let i=0;i<fl.length;i++){const f0=fl[i],f0n=f0.name;let f=f0;say2('… فهرسة '+toAr(i+1)+' / '+toAr(fl.length));
-  if(oldDoc(f.name)){f=await fixOld(f);if(!f){bad.push(f0n+' (doc قديم)');continue}}
+  if(oldDoc(f.name)){f=await fixOld(f);if(!f){bad.push(f0n+' (doc قديم'+(fixErr?': '+fixErr:'')+')');continue}}
   try{const d=await readDef(await f.arrayBuffer());if(!d.no||!d.yr||!d.facts.length){bad.push(f.name);continue}
    const k=dkey(d.no,d.yr);if(!dix[k]||(f.lastModified||0)>=(dix[k].t||0)){dix[k]={t:f.lastModified||Date.now(),name:f.name,g:G,f:{no:d.no,yr:d.yr,pl:d.pl,df:d.df,kind:d.kind,cs:d.cs,facts:d.facts,n:d.n,s:d.s,e:d.e}}}ok++}
   catch(e){bad.push(f.name)}}
@@ -2391,7 +2391,7 @@ window.lensToOpinion=async(text,dstr)=>{const js=parseJudg(text);
  toast('نُقل '+toAr(js.length)+' حكم إلى مذكرات الرأي'+(lk<js.length?' — '+toAr(js.length-lk)+' دون مذكرة دفاع':'')+' ✓');return js.length};
 
 $('odb').onclick=()=>$('odf').click();
-$('odf').onchange=async()=>{ops.forEach(x=>x._o=false);for(let f of $('odf').files){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say2(OLDMSG,1);continue}}const buf=await f.arrayBuffer();
+$('odf').onchange=async()=>{ops.forEach(x=>x._o=false);for(let f of $('odf').files){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say2(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);continue}}const buf=await f.arrayBuffer();
   {const fd=await readDef(buf),mo=ops.find(x=>x.nolink&&dkey(x.f.no,x.f.yr)===dkey(fd.no,fd.yr));
    if(mo){mo.f={...fd,cs:mo.f.cs||fd.cs};mo.name=f.name;mo.nolink=false;mo._o=true;continue}
    ops.push({name:f.name,b64:bytesToB64(new Uint8Array(buf)),f:fd,dd:'',dm:'',dy:toAr(Y),app:'',_o:$('odf').files.length===1})}}
@@ -2664,13 +2664,14 @@ $('td').onclick=()=>{if(cur===TY0){say('النوع الأساسي ما ينفع�
  for(const k of [...KINDS,...ck.map(c=>c.id)])dl(tk(k));dl(lk(0));dl(lk(1));[...KINDS,...ck.map(c=>c.id)].forEach(k=>{dl(lkk(0,k));dl(lkk(1,k))});types=types.filter(t=>t.id!==cur);svT();cur=TY0;sv('ty',cur);rt();loadLoc();tpl();chk()};
 const oldDoc=n=>/\.doc$/i.test(n),OLDMSG='تعذّر تحويل ملف doc القديم — تأكد أن «قارئ ويندوز المحلي» يعمل وأن Word مثبّت على اللابتوب، أو احفظ الملف بصيغة Word Document (.docx) ثم ارفعه.';
 /* تحويل doc (Word 2003) إلى docx عبر Word المثبّت على اللابتوب بواسطة السكربت المحلي */
+let fixErr='';
 async function fixOld(f){
-  try{toast('جارٍ تحويل «'+f.name+'» إلى docx عبر Word…');
+  fixErr='';try{toast('جارٍ تحويل «'+f.name+'» إلى docx عبر Word…');
     const r=await fetch('http://127.0.0.1:8765/doc2docx',{method:'POST',body:f,headers:{'Content-Type':'application/octet-stream'},signal:AbortSignal.timeout(180000)});
-    if(!r.ok)throw Error('HTTP '+r.status);
+    if(!r.ok){let m='';try{m=(await r.json()).error}catch(x){}throw Error(m&&m!=='not found'?m:('HTTP '+r.status))}
     const b=await r.arrayBuffer();if(b.byteLength<500)throw Error('ملف فارغ');
     return new File([b],f.name.replace(/\.doc$/i,'.docx'),{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
-  }catch(e){return null}}
+  }catch(e){const m=String(e&&e.message||e);fixErr=/Failed to fetch|NetworkError|Load failed|aborted/i.test(m)?'لا اتصال بالسكربت المحلي (تأكد أنه يعمل وأن الموقع مسموح له)':m==='HTTP 404'?'السكربت المحلي قديم — حدّثه بالأمر الجديد':m;return null}}
 function say(t,bad){$('st').textContent=t;$('st').className=bad?'e':'';try{toast((bad?'⚠ ':'')+t)}catch(e){}}
 // ===== speed-ups: saved defendants, review + warnings, archive, batch =====
 let bt=[];try{const o=JSON.parse(gv('draft_bt')||'[]');if(Array.isArray(o))bt=o.filter(r=>r&&typeof r==='object')}catch(e){}
@@ -3108,7 +3109,7 @@ function guessDoc(name,paras){const F=normT(name),all=normT(paras.join(' ')),T=a
  const kind=fem?'f':'m';return{key,kind,sure}}
 $('bulk').onclick=()=>$('bkf').click();
 $('bkf').onchange=async()=>{const fs=[...$('bkf').files];$('bkf').value='';if(!fs.length)return;const rows=[];
- for(let f of fs){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG,1);continue}}
+ for(let f of fs){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);continue}}
   try{const buf=await f.arrayBuffer(),g=guessDoc(f.name,await docParas(buf));rows.push({name:f.name,buf,tid:mtId[g.key],k:g.kind,sure:g.sure})}catch(e){say('تعذّرت قراءة «'+f.name+'»',1)}}
  if(!rows.length)return;
  const ov=modal('<h3>رفع المذكرات — مراجعة النوع والصيغة</h3><small></small><div id="bkl" style="margin-top:8px"></div><div class="r" style="margin-top:12px"><button class="go" id="bks" style="margin:0;flex:1">✓ حفظ الكل</button><button class="s" id="bkc">إلغاء</button></div>');
@@ -3142,7 +3143,7 @@ async function parseDefs(buf,name){const ps=await docParas(buf),td=ps.map(x=>x.r
  return out}
 $('dimp').onclick=$('dimp2').onclick=()=>$('dimf').click();
 $('dimf').onchange=async()=>{const fs=[...$('dimf').files];$('dimf').value='';if(!fs.length)return;const M=new Map();let nf=0;
- for(let f of fs){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG,1);continue}}
+ for(let f of fs){if(oldDoc(f.name)){f=await fixOld(f);if(!f){say(OLDMSG+(fixErr?' — السبب: '+fixErr:''),1);continue}}
   try{const items=parseDefs(await f.arrayBuffer(),f.name);for(const it of await items){const key=GN_NORM(it.title),e=M.get(key)||{title:it.title,req:it.req,m:'',f:'',der:false};
    if(it.fem){if(!e.f)e.f=it.text}else if(!e.m)e.m=it.text;if(!e.req)e.req=it.req;M.set(key,e);nf++}}catch(e){say('تعذّرت قراءة «'+f.name+'»',1)}}
  if(!M.size){say('لم أجد دفوعاً شكلية في هذه الملفات.',1);return}
@@ -3280,8 +3281,8 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
 $('kres').onclick=()=>{if(!hk.length){toast('لا توجد أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
 {const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
  const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
-const APP_VER='79',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const APP_NEW=['تبويب الرأي — فهرسة مذكرات الدفاع: عنوان لكل مجموعة (مثل «أحكام جلسة كذا»)، ورفعها دفعة واحدة أو مذكرة مذكرة، وتبقى في الانتظار حتى نقل الأحكام من لينس في أي وقت، مع قائمة بالمجموعات وحالة كل مذكرة (في الانتظار / استُعملت) وتغيير العنوان والحذف','دعم ملفات Word 2003 (doc): تُحوَّل تلقائياً إلى docx عبر Word المثبّت على اللابتوب بواسطة «قارئ ويندوز المحلي» عند رفعها في أي موضع، ولا يتطلب ذلك خطوة يدوية','مذكرات الدفاع: سطرا المدعى عليه والمدعي صارا بنفس حجم الخط (الأصغر منهما) بدل أن يصغر سطر المدعى عليه وحده','PDF Lens: النقر على أي رقم داخل النص يعرض صورته من الصفحة (داخل إطار أحمر مع ما حوله) ويفتح تحته مربعاً لتعديله مباشرة','PDF Lens: جُمعت إعدادات القراءة (الدقة، مراجعة السطور، القص وغيرها) داخل قائمة «⚙️ إعدادات القراءة» المطويّة، وأُلغي تفعيل «القراءة من قبول الطعن شكلًا» افتراضياً، وتُخفى «مراجعة الأرقام» و«كلمات مشكوك فيها» عند عمل قارئ ويندوز','PDF Lens: دعم «قارئ ويندوز المحلي» على اللابتوب — سكربت صغير يقرأ الصفحات بمحرك OCR العربي المدمج في ويندوز دون رفع شيء إلى الإنترنت، ويعود لينس إلى القارئ العادي تلقائياً إن لم يكن السكربت شغّالاً','قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
+const APP_VER='80',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const APP_NEW=['عند تعذّر تحويل ملف doc تظهر الآن رسالة بسبب الفشل (السكربت لا يعمل / قديم / مشكلة في Word) بدل رسالة عامة','تبويب الرأي — فهرسة مذكرات الدفاع: عنوان لكل مجموعة (مثل «أحكام جلسة كذا»)، ورفعها دفعة واحدة أو مذكرة مذكرة، وتبقى في الانتظار حتى نقل الأحكام من لينس في أي وقت، مع قائمة بالمجموعات وحالة كل مذكرة (في الانتظار / استُعملت) وتغيير العنوان والحذف','دعم ملفات Word 2003 (doc): تُحوَّل تلقائياً إلى docx عبر Word المثبّت على اللابتوب بواسطة «قارئ ويندوز المحلي» عند رفعها في أي موضع، ولا يتطلب ذلك خطوة يدوية','مذكرات الدفاع: سطرا المدعى عليه والمدعي صارا بنفس حجم الخط (الأصغر منهما) بدل أن يصغر سطر المدعى عليه وحده','PDF Lens: النقر على أي رقم داخل النص يعرض صورته من الصفحة (داخل إطار أحمر مع ما حوله) ويفتح تحته مربعاً لتعديله مباشرة','PDF Lens: جُمعت إعدادات القراءة (الدقة، مراجعة السطور، القص وغيرها) داخل قائمة «⚙️ إعدادات القراءة» المطويّة، وأُلغي تفعيل «القراءة من قبول الطعن شكلًا» افتراضياً، وتُخفى «مراجعة الأرقام» و«كلمات مشكوك فيها» عند عمل قارئ ويندوز','PDF Lens: دعم «قارئ ويندوز المحلي» على اللابتوب — سكربت صغير يقرأ الصفحات بمحرك OCR العربي المدمج في ويندوز دون رفع شيء إلى الإنترنت، ويعود لينس إلى القارئ العادي تلقائياً إن لم يكن السكربت شغّالاً','قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
 (()=>{const R=document.documentElement,get=()=>parseFloat(R.style.getPropertyValue('--uz'))||1;const z0=parseFloat(gv('uiz'));if(z0>0)R.style.setProperty('--uz',z0);
  const stp=d=>{const n=Math.min(3,Math.max(.7,Math.round((get()+d)*20)/20));R.style.setProperty('--uz',n);sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();

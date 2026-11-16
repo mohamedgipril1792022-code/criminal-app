@@ -39,6 +39,7 @@ details summary{cursor:pointer;color:var(--m);font-size:14px;margin-top:10px}
 .tb{display:flex;gap:8px;margin:0 0 8px}.tb button{flex:1;padding:12px;border:1px solid var(--b);background:var(--c);color:var(--t);font-weight:600;font-size:15px}.tb button.on{background:var(--a);color:#fff;border-color:var(--a)}
 .gtb{display:flex;gap:8px;margin:0 0 8px}.gtb button{flex:1;padding:12px;border:1px solid var(--b);background:var(--c);color:var(--t);font-weight:600;font-size:15px}.gtb button.on{background:var(--a);color:#fff;border-color:var(--a)}
 [hidden]{display:none!important}.it{border:1px solid var(--b);background:var(--f);border-radius:12px;padding:12px;margin:10px 0}.it textarea{margin-top:10px}
+.dxg{border:1px solid var(--b);border-radius:10px;padding:6px 8px;margin:6px 0;background:var(--f)}.dxg>summary{cursor:pointer;font-weight:600}.dxr{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:4px 0;border-top:1px dashed var(--b);font-size:13px}.dxr .w{color:#b7791f}.dxr .u{color:var(--a)}.dxr button{padding:2px 8px;min-height:28px}
 .pill{display:inline-block;background:var(--f);border:1px solid var(--b);border-radius:20px;padding:2px 10px;font-size:12px;color:var(--m);margin:2px 0 2px 4px}
 .ck{display:flex;align-items:center;gap:8px;min-width:150px;font-weight:600;cursor:pointer}.ck input{width:22px;height:22px;padding:0;min-width:0;flex:none}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:flex-end;justify-content:center}
@@ -214,7 +215,12 @@ body.sbx:not(.sbp) #sb:hover{width:196px;padding:16px 10px;box-shadow:-6px 0 18p
 <small>أو ارفع مذكرة جاهزة:</small>
 <div class="r"><button class="s" id="odb" style="flex:1">＋ رفع مذكرة دفاع (واحدة أو أكتر)</button></div>
 <input type="file" id="odf" accept=".docx,.doc" multiple hidden>
-<div class="r" style="margin-top:6px"><button class="s" id="dixb" style="flex:1">📚 فهرسة مذكرات الدفاع دفعة واحدة</button></div><input type="file" id="dixf" accept=".docx,.doc" multiple hidden><small id="dixs" style="display:block;margin-top:4px"></small>
+<details id="dixbox" style="margin-top:8px"><summary style="cursor:pointer;font-weight:700">📚 فهرسة مذكرات الدفاع (تبقى في الانتظار حتى رفع الأحكام)</summary>
+<small style="display:block;margin:6px 0">اكتب عنواناً للمجموعة (مثل: أحكام جلسة ٣١ أغسطس) ثم ارفع مذكراتها دفعة واحدة أو مذكرة مذكرة. تبقى محفوظة، وعند نقل أي حكم من لينس في أي وقت يُدمج مع مذكرته.</small>
+<div class="r"><input id="dixg" list="dixgl" placeholder="عنوان المجموعة — مثال: أحكام جلسة ٣١ أغسطس" style="flex:1"><datalist id="dixgl"></datalist></div>
+<div class="r" style="margin-top:6px"><button class="s" id="dixb" style="flex:1">📚 رفع دفعة واحدة</button><button class="s" id="dix1" style="flex:1">＋ رفع مذكرة مذكرة</button></div>
+<input type="file" id="dixf" accept=".docx,.doc" multiple hidden><input type="file" id="dixf1" accept=".docx,.doc" hidden>
+<small id="dixs" style="display:block;margin-top:4px"></small><div id="dixl" style="margin-top:6px"></div></details>
 <div style="margin-top:8px"><span class="pill">رقم الدعوى</span><span class="pill">السنة</span><span class="pill">المدعي</span><span class="pill">المدعى عليه</span><span class="pill">سطور الدفاع</span></div>
 <small></small>
 <div id="ol"></div></div>
@@ -2333,22 +2339,40 @@ function parseOne(g){
 const DIX='defidx',dkey=(no,yr)=>toEn(no||'').replace(/\D/g,'')+'/'+toEn(yr||'').replace(/\D/g,'');
 let dix={};try{dix=JSON.parse(gv(DIX)||'{}')||{}}catch(e){dix={}}
 const dixSave=()=>sv(DIX,JSON.stringify(dix)),dixN=()=>Object.keys(dix).length;
-function dixUi(){const e=$('dixs');if(e)e.textContent=dixN()?('مفهرس: '+toAr(dixN())+' دعوى — يُستعمل عند النقل من لينس'):'لم تُفهرس مذكرات بعد.'}
-async function findDef(no,yr){const k=dkey(no,yr);if(k==='/')return null;let best=dix[k]?{t:dix[k].t||0,f:{...dix[k].f},name:dix[k].name}:null;
+const GDEF=()=>'مجموعة '+toAr(new Date().getDate())+'/'+toAr(new Date().getMonth()+1)+'/'+toAr(new Date().getFullYear());
+function dixGroups(){const G=new Map();for(const k of Object.keys(dix)){const g=dix[k].g||'بدون عنوان';if(!G.has(g))G.set(g,[]);G.get(g).push(k)}return G}
+function dixUi(){const e=$('dixs');const n=dixN(),w=Object.values(dix).filter(x=>!x.used).length;
+ if(e)e.textContent=n?('مفهرس: '+toAr(n)+' دعوى — '+toAr(w)+' في الانتظار و'+toAr(n-w)+' استُعملت'):'لم تُفهرس مذكرات بعد.';
+ const dl=$('dixgl');if(dl)dl.innerHTML=[...dixGroups().keys()].map(g=>'<option value="'+esc(g)+'">').join('');
+ const L=$('dixl');if(!L)return;L.innerHTML='';
+ for(const [g,ks] of dixGroups()){const wt=ks.filter(k=>!dix[k].used).length;
+  const d=document.createElement('details');d.className='dxg';
+  d.innerHTML='<summary>'+esc(g)+' — '+toAr(ks.length)+' مذكرة ('+toAr(wt)+' في الانتظار)</summary>';
+  const bar=document.createElement('div');bar.className='dxr';bar.style.borderTop='0';
+  const rn=document.createElement('button');rn.type='button';rn.textContent='✏️ تغيير العنوان';rn.onclick=()=>{const v=(prompt('عنوان المجموعة:',g)||'').trim();if(!v||v===g)return;ks.forEach(k=>dix[k].g=v);dixSave();dixUi()};
+  const dg=document.createElement('button');dg.type='button';dg.textContent='🗑 حذف المجموعة';dg.onclick=()=>{if(!confirm('حذف مجموعة «'+g+'» ('+ks.length+' مذكرة) من الفهرس؟ لن تُحذف الأحكام المنقولة.'))return;ks.forEach(k=>delete dix[k]);dixSave();dixUi()};
+  bar.append(rn,dg);d.appendChild(bar);
+  for(const k of ks){const x=dix[k],r=document.createElement('div');r.className='dxr';
+   r.innerHTML='<b>'+esc(toAr(k.split('/')[0])+' لسنة '+toAr(k.split('/')[1]))+'</b><span>'+esc(x.f.pl||'')+'</span><span class="'+(x.used?'u':'w')+'">'+(x.used?'✓ استُعملت':'⏳ في الانتظار')+'</span>';
+   const xb=document.createElement('button');xb.type='button';xb.textContent='🗑';xb.title='حذف من الفهرس';xb.onclick=()=>{delete dix[k];dixSave();dixUi()};r.appendChild(xb);d.appendChild(r)}
+  L.appendChild(d)}}
+async function findDef(no,yr){const k=dkey(no,yr);if(k==='/')return null;let best=dix[k]?{t:dix[k].t||0,f:{...dix[k].f},name:dix[k].name,ix:k,g:dix[k].g}:null;
  const a=arch.filter(x=>dkey(x.c.no,x.c.yr)===k).sort((p,q)=>q.t-p.t)[0];
  if(a&&(!best||a.t>best.t)){try{const f=await readDef(await (await regen(a)).arrayBuffer());if(f.facts.length)return{t:a.t,f,name:fname(a.c)}}catch(e){}}
  return best}
 async function relinkOps(){let n=0;for(const o of ops){if(!o.nolink)continue;const d=await findDef(o.f.no,o.f.yr);if(!d)continue;
-  o.f={...d.f,cs:o.f.cs||d.f.cs};o.name=d.name;o.nolink=false;n++}if(n){ro();saveDraft()}return n}
-$('dixb').onclick=()=>$('dixf').click();
-$('dixf').onchange=async()=>{const fl=[...$('dixf').files];$('dixf').value='';let ok=0;const bad=[];
+  o.f={...d.f,cs:o.f.cs||d.f.cs};o.name=d.name;o.nolink=false;n++;if(d.ix&&dix[d.ix])dix[d.ix].used=Date.now()}if(n){dixSave();dixUi();ro();saveDraft()}return n}
+$('dixb').onclick=()=>$('dixf').click();$('dix1').onclick=()=>$('dixf1').click();
+async function dixAdd(fl){let ok=0;const bad=[];const G=($('dixg').value||'').trim()||GDEF();$('dixg').value=G;
  for(let i=0;i<fl.length;i++){const f0=fl[i],f0n=f0.name;let f=f0;say2('… فهرسة '+toAr(i+1)+' / '+toAr(fl.length));
   if(oldDoc(f.name)){f=await fixOld(f);if(!f){bad.push(f0n+' (doc قديم)');continue}}
   try{const d=await readDef(await f.arrayBuffer());if(!d.no||!d.yr||!d.facts.length){bad.push(f.name);continue}
-   const k=dkey(d.no,d.yr);if(!dix[k]||(f.lastModified||0)>=(dix[k].t||0)){dix[k]={t:f.lastModified||Date.now(),name:f.name,f:{no:d.no,yr:d.yr,pl:d.pl,df:d.df,kind:d.kind,cs:d.cs,facts:d.facts,n:d.n,s:d.s,e:d.e}}}ok++}
+   const k=dkey(d.no,d.yr);if(!dix[k]||(f.lastModified||0)>=(dix[k].t||0)){dix[k]={t:f.lastModified||Date.now(),name:f.name,g:G,f:{no:d.no,yr:d.yr,pl:d.pl,df:d.df,kind:d.kind,cs:d.cs,facts:d.facts,n:d.n,s:d.s,e:d.e}}}ok++}
   catch(e){bad.push(f.name)}}
  dixSave();dixUi();const rl=await relinkOps();
- say2('فُهرست '+toAr(ok)+' مذكرة'+(bad.length?' — تعذّرت '+toAr(bad.length)+': '+bad.slice(0,6).join('، ')+(bad.length>6?'…':''):'')+(rl?' — رُبط '+toAr(rl)+' حكم بمذكرته':''),!!bad.length&&!ok)};
+ say2('فُهرست '+toAr(ok)+' مذكرة في «'+G+'»'+(bad.length?' — تعذّرت '+toAr(bad.length)+': '+bad.slice(0,6).join('، ')+(bad.length>6?'…':''):'')+(rl?' — رُبط '+toAr(rl)+' حكم بمذكرته':''),!!bad.length&&!ok)}
+$('dixf').onchange=async()=>{const fl=[...$('dixf').files];$('dixf').value='';if(fl.length)await dixAdd(fl)};
+$('dixf1').onchange=async()=>{const fl=[...$('dixf1').files];$('dixf1').value='';if(fl.length)await dixAdd(fl)};
 dixUi();
 // ===== النقل من لينس إلى مذكرات الرأي =====
 const lensNote=o=>{if(!o.lens)return'';const w=(o._w||[]);
@@ -2359,10 +2383,11 @@ window.lensToOpinion=async(text,dstr)=>{const js=parseJudg(text);
  if(!js.length){toast(String(text||'').trim().length<80?'⚠ لا يوجد نص مقروء — اقرأ الصفحات في لينس أولاً':'⚠ لم أجد رقم الدعوى في النص (المتوقع «الدعوى رقم … لسنة … ق») — افتح نص إحدى الصفحات وتحقق من قراءة الرقم');return 0}
  let lk=0;const nw=[];
  for(const j of js){const d=await findDef(j.no,j.yr),f=d?{...d.f}:{no:toAr(j.no),yr:toAr(j.yr),pl:'',df:'',facts:[],kind:'m',cs:''};
+  if(d&&d.ix&&dix[d.ix])dix[d.ix].used=Date.now();
   if(j.cases.length)f.cs=j.cases.map(c=>'القضية رقم '+c).join(' ، ');
   const o={name:d?d.name:('حكم_'+j.no+'_'+j.yr+'.docx'),b64:'',f,ty:j.ty,vd:j.vd,dd:toAr(j.d),dm:toAr(j.m),dy:toAr(j.y||Y),app:j.ty==='n'?j.app:'',fv:j.ty==='r'?j.fv:'',ag:j.ty==='r'?j.ag:'',lens:1,nolink:!d,_w:j.warns,_o:js.length===1};
   const k=dkey(j.no,j.yr),ix=ops.findIndex(x=>x.lens&&dkey(x.f.no,x.f.yr)===k);if(ix>=0)ops[ix]=o;else ops.push(o);if(d)lk++;nw.push(o)}
- setPane('op');ro();saveDraft();
+ dixSave();dixUi();setPane('op');ro();saveDraft();
  toast('نُقل '+toAr(js.length)+' حكم إلى مذكرات الرأي'+(lk<js.length?' — '+toAr(js.length-lk)+' دون مذكرة دفاع':'')+' ✓');return js.length};
 
 $('odb').onclick=()=>$('odf').click();
@@ -3255,8 +3280,8 @@ $('kdel').onclick=()=>{const k=$('kd').value,c=ck.find(x=>x.id===k);if(vis().len
 $('kres').onclick=()=>{if(!hk.length){toast('لا توجد أنواع مخفية.');return}hk=[];sv('hkinds','[]');rkd();tpl();chk();rbt()};
 {const g0=isF($('kd').value)?'f':'m';pin?selectMemo(pin.t,g0):selectMemo(cur,(isM($('kd').value)||isF($('kd').value))?g0:$('kd').value);
  const gg=gnGuess($('pn').value);if(gg&&gg!==(isF($('kd').value)?'f':'m'))selectMemo(cur,gg)}
-const APP_VER='78',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-const APP_NEW=['دعم ملفات Word 2003 (doc): تُحوَّل تلقائياً إلى docx عبر Word المثبّت على اللابتوب بواسطة «قارئ ويندوز المحلي» عند رفعها في أي موضع، ولا يتطلب ذلك خطوة يدوية','مذكرات الدفاع: سطرا المدعى عليه والمدعي صارا بنفس حجم الخط (الأصغر منهما) بدل أن يصغر سطر المدعى عليه وحده','PDF Lens: النقر على أي رقم داخل النص يعرض صورته من الصفحة (داخل إطار أحمر مع ما حوله) ويفتح تحته مربعاً لتعديله مباشرة','PDF Lens: جُمعت إعدادات القراءة (الدقة، مراجعة السطور، القص وغيرها) داخل قائمة «⚙️ إعدادات القراءة» المطويّة، وأُلغي تفعيل «القراءة من قبول الطعن شكلًا» افتراضياً، وتُخفى «مراجعة الأرقام» و«كلمات مشكوك فيها» عند عمل قارئ ويندوز','PDF Lens: دعم «قارئ ويندوز المحلي» على اللابتوب — سكربت صغير يقرأ الصفحات بمحرك OCR العربي المدمج في ويندوز دون رفع شيء إلى الإنترنت، ويعود لينس إلى القارئ العادي تلقائياً إن لم يكن السكربت شغّالاً','قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
+const APP_VER='79',APP_DATE='2026-11-16',MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const APP_NEW=['تبويب الرأي — فهرسة مذكرات الدفاع: عنوان لكل مجموعة (مثل «أحكام جلسة كذا»)، ورفعها دفعة واحدة أو مذكرة مذكرة، وتبقى في الانتظار حتى نقل الأحكام من لينس في أي وقت، مع قائمة بالمجموعات وحالة كل مذكرة (في الانتظار / استُعملت) وتغيير العنوان والحذف','دعم ملفات Word 2003 (doc): تُحوَّل تلقائياً إلى docx عبر Word المثبّت على اللابتوب بواسطة «قارئ ويندوز المحلي» عند رفعها في أي موضع، ولا يتطلب ذلك خطوة يدوية','مذكرات الدفاع: سطرا المدعى عليه والمدعي صارا بنفس حجم الخط (الأصغر منهما) بدل أن يصغر سطر المدعى عليه وحده','PDF Lens: النقر على أي رقم داخل النص يعرض صورته من الصفحة (داخل إطار أحمر مع ما حوله) ويفتح تحته مربعاً لتعديله مباشرة','PDF Lens: جُمعت إعدادات القراءة (الدقة، مراجعة السطور، القص وغيرها) داخل قائمة «⚙️ إعدادات القراءة» المطويّة، وأُلغي تفعيل «القراءة من قبول الطعن شكلًا» افتراضياً، وتُخفى «مراجعة الأرقام» و«كلمات مشكوك فيها» عند عمل قارئ ويندوز','PDF Lens: دعم «قارئ ويندوز المحلي» على اللابتوب — سكربت صغير يقرأ الصفحات بمحرك OCR العربي المدمج في ويندوز دون رفع شيء إلى الإنترنت، ويعود لينس إلى القارئ العادي تلقائياً إن لم يكن السكربت شغّالاً','قارئ الأرقام في PDF Lens أُعيد تدريبه على ٢٢٤ صفحة من أحكامك (٥ و٦ و٠ و٤ وغيرها) ودقته على الاختبار ٩٩٪ بدل ٨٥٪، وعولج تقطّع الرقم «٦»','PDF Lens: حقل «تاريخ الحكم لكل الدفعة» بجوار زر النقل — يُكتب مرة واحدة ويُطبَّق على كل الأحكام المنقولة، فلا حاجة لقراءة الصفحة الأولى','PDF Lens: حقلان لتعديل بداية ونهاية القراءة (فارغ = التلقائي «قبول … شكلاً» إلى «وكيل المدعي»)، ويُحفظان','النقل من لينس يستعمل النص الكامل للصفحات حتى مع تفعيل «القراءة من قبول الطعن شكلاً إلى وكيل المدعي» (فيصل إلى رقم الدعوى والتاريخ والقضايا)','تحسين قراءة الأحكام عند النقل من لينس: يتجاهل علامات التشكيل وألف الوصل، ويقبل رقم الدعوى بصيغ أخرى','زر «تحرير هذه المذكرة فقط» داخل كل عنصر في تبويب الرأي، بجانب تحرير الكل','النقل من لينس يعمل أيضاً مع صفحات «تابع الحكم في الدعوى رقم …» وحدها (دون الصفحة الأولى)، وما لم يُوجد يبقى فارغاً مع تنبيه','زر «نقل إلى مذكرة الرأي» في PDF Lens: يميّز نوع الحكم (إلغاء أو إلغاء ورفض) ويملأ المنطوق والقضايا والتصرف النهائي، ويأخذ الأطراف من مذكرة الدفاع','فهرسة مذكرات الدفاع دفعة واحدة في تبويب الرأي، والقضايا في المذكرتين قائمة مرقمة «القضية رقم»','زر «فحص البرنامج» في النسخة الاحتياطية: يولّد مذكرة تجريبية من كل نوع ويتحقق من سلامتها','النسخة الاحتياطية تشمل الأرشيف والرول وذاكرة Lens، مع عدّاد للمساحة ونسخة تلقائية أسبوعية في المجلد المختار، ووضع «الجلسة» في الرول (التالية وتقدّم وZIP)','تحسين الجوال: شريط تنقل سفلي، وترويسة مضغوطة، وحقول وأزرار أكبر، وطيّ مذكرات الرأي، وإمكانية التثبيت كتطبيق','تحديث PDF Lens: قوالب الجمل لتصحيح الفقرات المتكررة، وتنعيم الخلفية، وقراءة صور الهاتف بصيغ أوسع','تنظيم القائمة الجانبية: «المذكرات المدمجة» تحت مذكرات الدفاع، و«نماذج الرأي» تحت مذكرات الرأي','إخفاء زر «تحرير المذكرة» الخاص بمذكرات الدفاع من تبويب مذكرات الرأي','مذكرات الرأي: خط Arial موحّد بحجم ١٥ لكل النص، وحذف الفقرات الفارغة لتبقى المذكرة في ورقتين','إصلاح ترويسة مذكرة «إلغاء ورفض»: حذف الفراغات التي كانت تُخفي سطر «ضد» وتدفع «الجلسة» خارج الإطار','تحديث PDF Lens: قصّ الصفحة على النص وضبط الحجم تلقائياً قبل القراءة','مذكرات الرأي: نوعان مدمجان (عادية، إلغاء ورفض) بمنطوق قابل للتعديل ونموذج مدعية لكل نوع، وخانتان للقضايا المقضي فيها لصالح الدولة وضدها','جميع النصوص بالعربية الفصحى وبصيغة المخاطب المذكر، مع حذف الشروحات الزائدة','اختيار مكان حفظ المذكرات فوق الرول، وإغلاق الرول بعد اختيار القضية','ملء القضايا المراد محوها تلقائياً من الطلبات أو «بزعم من أن»','قضية واحدة: مربع التصرف النهائي — أكثر من قضية: مربع التطبيق المدمج','إشعار بعد التحميل مع زر «فتح» للمراجعة والتعديل','أرشيف المذكرات في القائمة الجانبية مع «تعديل» و«إلغاء»','تبويب PDF Lens ووضع فاتح / داكن / تلقائي'];
 (()=>{const R=document.documentElement,get=()=>parseFloat(R.style.getPropertyValue('--uz'))||1;const z0=parseFloat(gv('uiz'));if(z0>0)R.style.setProperty('--uz',z0);
  const stp=d=>{const n=Math.min(3,Math.max(.7,Math.round((get()+d)*20)/20));R.style.setProperty('--uz',n);sv('uiz',n)};
  $('zp').onclick=()=>stp(.15);$('zm').onclick=()=>stp(-.15)})();

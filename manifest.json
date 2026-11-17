@@ -1,7 +1,6 @@
 {
  "name": "التسجيل الجنائي",
  "short_name": "التسجيل الجنائي",
- "description": "مذكرات الدفاع والرأي",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
@@ -11,13 +10,13 @@
  "theme_color": "#1f3b4d",
  "icons": [
   {
-   "src": "icon-192.png",
+   "src": "icon-192-n.png",
    "sizes": "192x192",
    "type": "image/png",
    "purpose": "any maskable"
   },
   {
-   "src": "icon-512.png",
+   "src": "icon-512-n.png",
    "sizes": "512x512",
    "type": "image/png",
    "purpose": "any maskable"
